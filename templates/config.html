@@ -1,0 +1,367 @@
+<!--training.html-->
+<!--This page allows to check that some libraries are present in the calculation environment, 
+in order to ensure the good continuity of the web application functionalities
+(ie. tensorflow, gdal, rasterio, sklearn, ...).-->
+{% extends "layout.html" %}
+
+{% block content %}
+
+<!--Add jQuery library-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<!--Add Bootstrap library-->
+<!--
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+-->
+
+<!--Title-->
+<h1 style="margin-top: 10px; margin-left: 20px;">Environment checking</h1>
+
+<!--Description-->
+<div class="text-box">
+    <p align="justify">
+    <b>Verification of the computing environment main packages for the proper execution of the application programs</b><br>
+    To verify each main package, please click on the corresponding orange button, afterwards a status message will be displayed 
+    if the package is available its version will be given bellows. In case the package is not installed, 
+    please quit the application and install the missing package, or update the container with the missing package. 
+    In case an error occurs, please contact a technical staff to repair the software. 
+    A reset button is available to return the buttons to their original states.
+    </p>
+    <br>
+
+    <div>
+        <p><strong>Color code:</strong></p>
+        <div class="color-code-container">
+            <button></button>
+            <span>The package is installed and can access a graphic accelerator</span>
+        </div>
+        <div class="color-code-container">
+            <button style="background-color: green;"></button>
+            <span>The package is installed and its version is compatible with the application</span>
+        </div>
+        <div class="color-code-container">
+            <button style="background-color: red;"></button>
+            <span>The package is not installed, please install it before using the application</span>
+        </div>
+        <div class="color-code-container">
+            <button style="background-color: black;"></button>
+            <span>An error occurred while checking the package, please contact the administrator</span>
+        </div>
+    </div>
+        
+</div>
+
+<!-- Container div -->
+<div style="font-size: 16px; padding: 10px; margin-left: 100px; margin-right: 200px;">
+    <div class="row">
+        <!-- Colonne de gauche -->
+        <div class="col-sm-6">
+
+            <div id="result-container-tensorrt">
+                <button id="check-tensorrt-btn" class="fun-button">TensorRT</button>
+                <p id="result-text-tensorrt">Please check me</p>
+            </div>
+
+            <div id="result-container-tf">
+                <button id="check-tensorflow-btn" class="fun-button">TensorFlow</button>
+                <p id="result-text-tf">Please check me</p>
+            </div>
+
+            <div id="result-container-torch">
+                <button id="check-torch-btn" class="fun-button">PyTorch</button>
+                <p id="result-text-torch">Please check me</p>
+            </div>
+
+            <div id="result-container-gdal">
+                <button id="check-gdal-btn" class="fun-button">GDAL</button>
+                <p id="result-text-gdal">Please check me</p>
+            </div>
+
+            <div id="result-container-geopandas">
+                <button id="check-geopandas-btn" class="fun-button">Geopandas</button>
+                <p id="result-text-geopandas">Please check me</p>
+            </div>
+
+            <div id="result-container-rasterio">
+                <button id="check-rasterio-btn" class="fun-button">Rasterio</button>
+                <p id="result-text-rasterio">Please check me</p>
+            </div>
+
+            <div id="result-container-sklearn">
+                <button id="check-sklearn-btn" class="fun-button">Scikit-learn</button>
+                <p id="result-text-sklearn">Please check me</p>
+            </div>
+        </div>  
+
+        <!-- Colonne de droite -->
+        <div class="col-sm-6">
+            <div id="compatibility-score">
+                <p id="compatibility-text">Environment compatibility: 0%</p>
+                This score is calculated based on the number of packages installed and their versions.
+                A value of 100% is not necessarily a requirement for the application to work.
+                It can be higher than 100%, which means the workstation possesses high-performing hardware.
+            </div>
+            <br
+
+            <div style="margin-top: 10px;">
+                <button id="reset-btn" class="reset-button">Reset</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--JavaScript is used here to detect the button click and make an AJAX request 
+to the Flask application to check if TensorFlow is installed-->
+<script>
+
+    // Variables to store the initial state of the buttons, only on tf button and text to store the style
+    var initialButtonColor = document.getElementById("check-tensorflow-btn").style.backgroundColor;
+    var initialButtonText = document.getElementById("result-text-tf").textContent;
+
+    // Scores
+    var tensorrt_score = 0;
+    var tensorflow_score = 0;
+    var torch_score = 0;
+    var gdal_score = 0;
+    var geopandas_score = 0;
+    var rasterio_score = 0;
+    var sklearn_score = 0;
+    var compatibility_score = 0;
+    nPackages = 8;
+
+    // Function to update the compatibility text
+    function updateCompatibilityText() {
+        var compatibility_score = ((tensorrt_score +
+                                    tensorflow_score + 
+                                    torch_score +
+                                    gdal_score + 
+                                    geopandas_score + 
+                                    rasterio_score + 
+                                    sklearn_score) / nPackages) * 10;
+        // Round the score
+        var rounded_score = Math.round(compatibility_score);
+        document.getElementById("compatibility-text").textContent = "Environment compatibility: " + rounded_score + '%';
+    }
+
+    // Listen to the tensorrt button
+    document.getElementById("check-tensorrt-btn").addEventListener("click", function() {
+        this.style.backgroundColor = "#ff9900";
+        // Check tensorrt
+        $.ajax({
+            url: '/check-tensorrt',
+            type: 'GET',
+            success: function(response) {
+                if (response.installed) {
+                    $('#result-text-tensorrt').text('TensorRT is installed (version ' + response.version + ')');
+                    document.getElementById("check-tensorrt-btn").style.backgroundColor = "green";
+                    tensorrt_score = Math.round(100/nPackages);
+                } else {
+                    $('#result-text-tensorrt').text('TensorRT is not installed');
+                    document.getElementById("check-tensorrt-btn").style.backgroundColor = "red";
+                    tensorrt_score = 0;
+                }
+                updateCompatibilityText();
+            },
+            error: function(error) {
+                $('#result-text-tensorrt').text('An error occurred while checking TensorRT');
+                document.getElementById("check-tensorrt-btn").style.backgroundColor = "black";
+                tensorrt_score = 0;
+                updateCompatibilityText();
+            }
+        });
+    });
+
+    // Listen to the "Check" button for tensorflow
+    document.getElementById("check-tensorflow-btn").addEventListener("click", function() {
+        this.style.backgroundColor = "#ff9900";
+        // Check tensorflow
+        $.ajax({
+            url: '/check-tensorflow',
+            type: 'GET',
+            success: function(response) {
+                if (response.installed) {
+                    if (response.gpu) {
+                        $('#result-text-tf').text('TensorFlow is installed (version ' + response.version + ') and GPU (id number: '+response.name_gpu+') is available');
+                        tensorflow_score = Math.round(100/nPackages);
+                        document.getElementById("check-tensorflow-btn").style.backgroundColor = "yellow";
+                    } else {
+                        $('#result-text-tf').text('TensorFlow is installed (version ' + response.version + ') and GPU is not available');
+                        document.getElementById("check-tensorflow-btn").style.backgroundColor = "green";
+                        tensorflow_score = Math.round((100/nPackages)/2);
+                    }
+                    updateCompatibilityText();
+                } else {
+                    $('#result-text-tf').text('TensorFlow is not installed, please install the package before using this application. Somes functionalities will not be available.');
+                    document.getElementById("check-tensorflow-btn").style.backgroundColor = "red";
+                }},
+                error: function() {
+                    $('#result-text-tf').text('Error checking TensorFlow, please contact the administrator.');
+                    document.getElementById("check-tensorflow-btn").style.backgroundColor = "black";
+                }
+        });
+    });
+
+    // Listen to the "Check" button for pytorch
+    document.getElementById("check-torch-btn").addEventListener("click", function() {
+        this.style.backgroundColor = "#ff9900";
+        // Check pytorch
+        $.ajax({
+            url: '/check-torch',
+            type: 'GET',
+            success: function(response) {
+                if (response.installed) {
+                    if (response.gpu) {
+                        $('#result-text-torch').text('Pytorch is installed (version ' + response.version + ') and GPU (name: '+response.name_gpu+') is available');
+                        torch_score = Math.round(100/nPackages);
+                        document.getElementById("check-torch-btn").style.backgroundColor = "yellow";
+                    } else {
+                        $('#result-text-torch').text('Pytorch is installed (version ' + response.version + ') and GPU is not available');
+                        document.getElementById("check-torch-btn").style.backgroundColor = "green";
+                        torch_score = Math.round((100/nPackages)/2);
+                    }
+                    updateCompatibilityText();
+                } else {
+                    $('#result-text-torch').text('PyTorch is not installed, please install the package before using this application. Somes functionalities will not be available.');
+                    document.getElementById("check-torch-btn").style.backgroundColor = "red";
+                }},
+                error: function() {
+                    $('#result-text-torch').text('Error checking PyTorch, please contact the administrator.');
+                    document.getElementById("check-torch-btn").style.backgroundColor = "black";
+                }
+        });
+    });
+
+    // Listen to the "Check" button for gdal
+    document.getElementById("check-gdal-btn").addEventListener("click", function() {
+        this.style.backgroundColor = "#ff9900";
+        // Check gdal
+        $.ajax({
+            url: '/check-gdal',
+            type: 'GET',
+            success: function(response) {
+                if (response.installed) {
+                    $('#result-text-gdal').text('GDAL is installed (version ' + response.version + ')');
+                    gdal_score = Math.round(100/nPackages);
+                    updateCompatibilityText();
+                    document.getElementById("check-gdal-btn").style.backgroundColor = "green";
+                } else {
+                    $('#result-text-gdal').text('GDAL is not installed, please install the package before using this application. Somes functionalities will not be available.');
+                    document.getElementById("check-gdal-btn").style.backgroundColor = "red";
+                }},
+                error: function() {
+                    $('#result-text-gdal').text('Error checking GDAL, please contact the administrator.');
+                    document.getElementById("check-gdal-btn").style.backgroundColor = "black";
+                }
+        });
+    });
+
+    // Listen to the "geopandas" button
+    document.getElementById("check-geopandas-btn").addEventListener("click", function() {
+        this.style.backgroundColor = "#ff9900";
+        // Check geopandas
+        $.ajax({
+            url: '/check-geopandas',
+            type: 'GET',
+            success: function(response) {
+                if (response.installed) {
+                    $('#result-text-geopandas').text('Geopandas is installed (version ' + response.version + ')');
+                    geopandas_score = Math.round(100/nPackages); // Augmenter le score seulement si Geopandas est installé
+                    updateCompatibilityText();
+                    document.getElementById("check-geopandas-btn").style.backgroundColor = "green";
+                } else {
+                    $('#result-text-geopandas').text('Geopandas is not installed, please install the package before using this application. Some functionalities will not be available.');
+                    document.getElementById("check-geopandas-btn").style.backgroundColor = "red";
+                }},
+                error: function() {
+                    $('#result-text-geopandas').text('Error checking Geopandas, please contact the administrator.');
+                    document.getElementById("check-geopandas-btn").style.backgroundColor = "black";
+                }
+        });
+    });
+
+    // Listen to the "rasterio" button
+    document.getElementById("check-rasterio-btn").addEventListener("click", function() {
+        this.style.backgroundColor = "#ff9900";
+        // Check rasterio
+        $.ajax({
+            url: '/check-rasterio',
+            type: 'GET',
+            success: function(response) {
+                if (response.installed) {
+                    $('#result-text-rasterio').text('Rasterio is installed (version ' + response.version + ')');
+                    rasterio_score = Math.round(100/nPackages);
+                    updateCompatibilityText();
+                    document.getElementById("check-rasterio-btn").style.backgroundColor = "green"; // Change button color to green
+                } else {
+                    $('#result-text-rasterio').text('Rasterio is not installed, please install the package before using this application. Somes functionalities will not be available.');
+                    document.getElementById("check-rasterio-btn").style.backgroundColor = "red"; // Change button color to red
+                }},
+                error: function() {
+                    $('#result-text-rasterio').text('Error checking Rasterio, please contact the administrator.');
+                    document.getElementById("check-rasterio-btn").style.backgroundColor = "black"; // Change button color to black
+                }
+        });
+    });
+
+    // Listen to the "sklearn" button
+    document.getElementById("check-sklearn-btn").addEventListener("click", function() {
+        this.style.backgroundColor = "#ff9900";
+        // Check sklearn
+        $.ajax({
+        url: '/check-sklearn',
+        type: 'GET',
+        success: function(response) {
+            if (response.installed) {
+                $('#result-text-sklearn').text('Scikit-learn is installed (version ' + response.version + ')');
+                sklearn_score = Math.round(100/nPackages);
+                updateCompatibilityText();
+                document.getElementById("check-sklearn-btn").style.backgroundColor = "green"; // Change button color to green
+            } else {
+                $('#result-text-sklearn').text('Scikit-learn is not installed, please install the package before using this application. Somes functionalities will not be available.');
+                document.getElementById("check-sklearn-btn").style.backgroundColor = "red"; // Change button color to red
+            }},
+            error: function() {
+                $('#result-text-sklearn').text('Error checking Scikit-learn, please contact the administrator.');
+                document.getElementById("check-sklearn-btn").style.backgroundColor = "black"; // Change button color to black
+            }
+        });
+    });
+
+    // Listen to the "Reset" button
+    document.getElementById("reset-btn").addEventListener("click", function() {
+        // Reset the individual scores
+        tensorrt_score = 0;
+        tensorflow_score = 0;
+        torch_score = 0;
+        gdal_score = 0;
+        geopandas_score = 0;
+        rasterio_score = 0;
+        sklearn_score = 0;
+        compatibility_score = 0;
+
+        // Reset the compatibility text
+        updateCompatibilityText();
+
+        // Reset the buttons color
+        document.getElementById("check-tensorrt-btn").style.backgroundColor = initialButtonColor;
+        document.getElementById("check-tensorflow-btn").style.backgroundColor = initialButtonColor;
+        document.getElementById("check-torch-btn").style.backgroundColor = initialButtonColor;
+        document.getElementById("check-gdal-btn").style.backgroundColor = initialButtonColor;
+        document.getElementById("check-geopandas-btn").style.backgroundColor = initialButtonColor;
+        document.getElementById("check-rasterio-btn").style.backgroundColor = initialButtonColor;
+        document.getElementById("check-sklearn-btn").style.backgroundColor = initialButtonColor;
+
+        // Reset the buttons text
+        document.getElementById("result-text-tensorrt").textContent = initialButtonText;
+        document.getElementById("result-text-tf").textContent = initialButtonText;
+        document.getElementById("result-text-torch").textContent = initialButtonText;
+        document.getElementById("result-text-gdal").textContent = initialButtonText;
+        document.getElementById("result-text-geopandas").textContent = initialButtonText;
+        document.getElementById("result-text-rasterio").textContent = initialButtonText;
+        document.getElementById("result-text-sklearn").textContent = initialButtonText;
+    });
+
+
+</script>
+
+{% endblock %}

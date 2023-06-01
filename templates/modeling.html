@@ -1,0 +1,199 @@
+<!--modeling.html-->
+<!--This page allows to generate a blank deep learning model-->
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h1 style="margin-top: 10px; margin-left: 20px;">Deep modeling</h1>
+
+<div style="background: ghostwhite; font-size: 16px; padding: 10px; border: 1px solid lightgray; margin: 20px;">
+
+    <p align="justify">
+    <b>Modeling phase</b> enables centralized deep model generation from a provided set of parameters. 
+    At this time and regarding the needs of the project, only deep convolutional models are available.
+    Convolutional neural network (CNN) is a class of deep neural networks, most 
+    commonly applied to analyzing visual imagery. The program automatically detects the presence or absence of a graphics engine for the training process.
+    Two methods of model generation are implemented: from source or from scratch. 
+    <ul>
+        <li><b>From source</b> - The model is generated from a file containing the model configuration.</li>
+        <li><b>From parameters</b> - The model is generated from a set of parameters.</li>
+    </ul>
+    <b>1. From source</b> - Parses a model configuration file and returns a model instance, whatever the model type is.
+    <ul>
+        <!--Blank model / Pre-trained model-->
+        <li><b>Blank model</b></li>
+        <ul>
+            <li><b>YAML</b> - YAML (YAML Ain't Markup Language) is a more human-readable data serialization 
+                format that is often used for complex data configuration and representation. 
+                <i>Method `model.to_yaml()` has been removed due to security risk of arbitrary code execution.
+                Please use `model.to_json()` instead.</i></li>
+            <li><b>JSON</b> - (JavaScript Object Notation) JSON is a widely used data format for serializing 
+                and exchanging structured data. </li>
+        </ul>
+        <!--Saved model / GraphDef / Checkpoint / HDF5-->
+        <li><b>Pre-trained model</b></li>
+        <ul>
+            <li><b>Saved model</b> - This is the standard format for saving TensorFlow models. 
+                A saved model is a directory containing binary files that represent the model architecture, 
+                parameter weights, and configuration information.</li>
+            <li><b>GraphDef</b> - A GraphDef protocol buffer, which represents the structure of a TensorFlow.</li>
+            <li><b>Checkpoint</b> - A training checkpoint is a binary file containing the state of a TensorFlow model 
+                at a certain point in training. This includes the graph data structure, the values of all model parameters, 
+                and the optimizer parameters.</li>
+            <li><b>HDF5</b> - HDF5 is a data model, library, and file format for storing and managing data.</li>
+        </ul>
+    </ul>
+    <br>
+    <b>2. From parameters</b> - Generate a blank tensorflow model from a set of fixed parameters. The model design is conditionned to DeepRun project needs and by the following parameters:
+    <ul>
+    <li><b></b>Number of convolutional layers for features extraction.</b></li>
+    <li><b></b>Number of dense layers for classification.</b></li>
+    <li><b></b>Number of convolutional kernels.</b></li>
+    <li><b></b>Number of dense neurons.</b></li>
+    </p>
+
+</div>
+
+<div style="font-size: 16px; padding: 10px; margin-left: 100px; margin-right: 200px;">
+
+    <p class="title">1. From source</p>
+    <input type="file" id="btn-browser" accept=".zip, .yaml, .json, .h5, .hdf5, .pb, .pbtxt, .ckpt, .ckpt.index, .ckpt.data-00000-of-00001, .index, .meta, .tflite, .lite" />
+    <br>
+    <br>
+    <button id="btn-generate_config">Generate model</button>
+    <br>
+    <div id="message_config1"></div>
+    <div id="message_config2"></div>
+    <br>
+    <div id="model-summary_config"></div>
+    <br>
+    <br>
+    <p class="title">2. From parameters</p>
+
+    <label for="height_image">Height of the Image:</label>
+    <input type="number" id="height_image" name="height_image" min="1" max="1024" value="25" size="5">
+    <br>
+    <label for="width_image">Width of the Image:</label>
+    <input type="number" id="width_image" name="width_image" min="1" max="1024" value="25" size="5">
+    <br>
+    <label for="channels_image">Number of Image Channels:</label>
+    <input type="number" id="channels_image" name="channels_image" min="1" max="100" value="4" size="5">
+    <br>
+    <label for="conv_layers">Number of Convolutional Layers:</label>
+    <input type="number" id="conv_layers" name="conv_layers" min="1" max="16" value="3" size="5">
+    <br>
+    <label for="dense_layers">Number of Dense Layers:</label>
+    <input type="number" id="dense_layers" name="dense_layers" min="1" max="16" value="2" size="5">
+    <br>
+    <label for="conv_kernels">Number of Convolutional Kernels:</label>
+    <input type="number" id="conv_kernels" name="conv_kernels" min="1" max="512" value="128" size="5">
+    <br>
+    <label for="dense_neurons">Number of Dense Neurons:</label>
+    <input type="number" id="dense_neurons" name="dense_neurons" min="1" max="512" value="256" size="5">
+    <br>
+    <button id="btn-generate_params">Generate model</button>
+    <br>
+    <div id="message_params"></div>
+    <br>
+    <div id="model-summary_params"></div>
+    <br>
+    <br>
+
+</div>
+
+<script>
+
+    $(document).ready(function() {
+        // Listen to browser button
+        $('#btn-browser').change(function() {
+            var selectedFile = $(this).prop('files')[0];
+            var formData = new FormData();
+            formData.append('config_file', selectedFile);
+            console.log('File path : ' + selectedFile);
+            
+            // Call Flask API to upload the file
+            $.ajax({
+                url: '/upload_source',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    // Display success message
+                    var color = response.color;
+                    var message = response.message;
+                    $('#message_config1').html('<span style="color: ' + color + '">' + message + '</span>');
+                },
+                error: function(error) {
+                    // Display error message
+                    $('#message_config1').text('Error while uploading the configuration file!').addClass('red-text');
+                }
+            });
+        });
+
+        // Listen to generate button with config file
+        $('#btn-generate_config').click(function() {
+            // Call Flask API to generate the model
+            $.ajax({
+                url: '/generate_from_source',
+                type: 'GET',
+                success: function(response) {
+                    // Display success message
+                    $('#message_config2').html('<span style="color: ' + response.color + '">' + response.message + '</span>');
+                    $('#model-summary_config').text(response.model_summary);
+
+                },
+                error: function(error) {
+                    // Display error message
+                    $('#message_config2').text('Error while generating the model!').addClass('red-text');
+                }
+            });
+        });
+
+        // Listen to generate button with fixed parameters
+        $('#btn-generate_params').click(function() {
+            generateModel_params();
+        });
+
+        function generateModel_params() {
+            var heightImage = $('#height_image').val();
+            var widthImage = $('#width_image').val();
+            var channelsImage = $('#channels_image').val();
+            var convLayers = $('#conv_layers').val();
+            var denseLayers = $('#dense_layers').val();
+            var convKernels = $('#conv_kernels').val();
+            var denseNeurons = $('#dense_neurons').val();
+
+            // Call Flask API to generate the model
+            $.ajax({
+                url: '/generate_from_param',
+                type: 'POST',
+                data: JSON.stringify({
+                    height_image: heightImage,
+                    width_image: widthImage,
+                    channels_image: channelsImage,
+                    conv_layers: convLayers,
+                    dense_layers: denseLayers,
+                    conv_kernels: convKernels,
+                    dense_neurons: denseNeurons
+                }),
+                contentType: 'application/json',
+                success: function(response) {
+                    // Display success message
+                    var color = response.color;
+                    var message = response.message;
+                    $('#message_params').html('<span style="color: ' + color + '">' + message + '</span>');
+                    $('#model-summary_params').text(response.model_summary);
+                },
+                error: function(error) {
+                    // Display error message
+                    $('#message_params').text('Error while generating the model!').addClass('red-text');
+                }
+            });
+        }
+    });
+
+</script>
+
+
+{% endblock %}

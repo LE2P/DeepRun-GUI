@@ -1,0 +1,239 @@
+<!--inference.html-->
+<!--This is a page so the objective is to make inference of an image regarding the generated/trained model-->
+{% extends "layout.html" %}
+
+{% block content %}
+
+<!--Add jQuery library-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<!--Title-->
+<h1 style="margin-top: 10px; margin-left: 20px;">Image inference</h1>
+
+<!--Description-->
+<div style="background: ghostwhite; font-size: 16px; 
+padding: 10px; border: 1px solid lightgray; margin: 20px;">
+  <p align="justify">
+  <b>Inference phase</b> enables segmentation of a single image regarding a trained model.
+  <br>
+  <b>Required</b> - A deep model must be generated/trained before inference phase.
+  <br>
+  <ul>
+    <li><b>Model</b></li> - Select a deep model for inference process. Either it is a pre-trained model via deepRun application, 
+    or a pre-trained model from an other way.
+    <li><b>Image</b></li> - Select an image to segmentation. (TODO: multiple images, and image folder)
+    The program automatically detects the presence or absence of a graphics engine for the inference process.
+    <li><b>Parameters</b></li> - The inference process can be configured with three parameters:
+    <ul>
+      <li><b>Concat</b></li> - The number of images to concatenate before inference process. 
+      This parameter is useful for the inference process of large images. If a performing graphics engine with large memory is available, 
+      it is recommended to increase this parameter. 
+      <li><b>Saving</b></li> - The number of images to save before inference process. 
+      This parameter is useful for the inference process of large images. Be careful, the saving process is time consuming.
+      <li><b>Pixel resolution</b></li> - The pixel resolution of the image to be segmented.
+    </ul>
+  </p>
+</div>
+
+<div style="font-size: 16px; padding: 10px; margin-left: 100px; margin-right: 200px;">
+
+    <p class="title">1. Select model</p>
+    <!-- Switch button for model type loading -->
+    <div class="switch">
+      <input type="radio" id="upload" name="switch" value="upload" checked>
+      <label for="upload">Upload</label>
+      <input type="radio" id="load" name="switch" value="load">
+      <label for="load">Load</label>
+      <input type="radio" id="default" name="switch" value="default">
+      <label for="default">Default</label>
+    </div>
+    <!-- Text box for model type loading -->
+    <div id="switch-status" class="blue-text"></div>
+    <br>
+
+    <!-- Upload model if switch button is on upload -->
+    <div id="upload-button" style="display: none;">
+        <input type="file" id="model-file-upload" accept=".h5, .hdf5, .hdf, .json, .zip" />
+    </div>
+    <!-- Text box for model loading -->
+    <div id="load-model-status" class="blue-text"></div>
+    <br>
+
+    <p class="title">2. Upload image</p>
+    <!-- Upload image -->
+    <input type="file" id="btn-browser" accept=".tif, .tiff" />
+    <br>
+    <!-- Image message status -->
+    <div id="message_image" class="blue-text"></div>
+    <br>
+
+    <p class="title">3. Inference process</p>
+    <!-- Inference parameters -->   
+    <label for="concat-input">Concat:</label>
+    <input type="number" id="concat-input" min="1" max="100000" value="100" step="1">
+    
+    <label for="saving-input">Saving:</label>
+    <input type="number" id="saving-input" min="1" max="100000" value="100" step="1">
+    <br>
+
+    <!-- input for a float value -->
+    <label for="pixel-resolution-input">Pixel resolution:</label>
+    <input type="number" id="pixel-resolution-input" name="pixel-resolution-input" min="0.01" max="100" value="0.5" step="0.01">
+
+
+    <label for="padding-shift-input">Padding shift:</label>
+    <input type="number" id="padding-shift-input" min="0" max="100" value="1" step="1">
+    <br>
+    <br>
+
+    <!-- Inference process button -->
+    <button id="btn-process_inference">Process Image</button>
+    <br>
+    <!-- Inference process message status -->
+    <div id="message_inference" class="blue-text"></div>
+
+</div>
+
+<script>
+
+    $(document).ready(function() {
+
+        var formData = new FormData();
+
+        // Event handler for switch state change
+        $('.switch input[type="radio"]').change(function() {
+            var selectedValue = $(this).val();
+            // Create the data object with the selected state
+            var switchStatus = { state: selectedValue };
+            // Print the data object to the console
+            console.log('switchStatus:', switchStatus);
+
+            // Show the browser button if the selected value is 'upload'
+            if (selectedValue === 'upload') {
+                // Show the upload button
+                $('#upload-button').show();
+            } else {
+                // Hide the upload button
+                $('#upload-button').hide();
+            }
+            // Show the load model status if the selected value is 'upload'
+            if (selectedValue === 'upload') {
+                $('#load-model-status').show();
+            } else {
+                $('#load-model-status').hide();
+            }
+
+            // Send the switch status to the server
+            $.ajax({
+                url: '/switch_state',
+                type: 'POST',
+                data: JSON.stringify(switchStatus),
+                dataType: 'json',
+                contentType: 'application/json', 
+                success: function(response) {
+                    // Handle the response from the server
+                    $('#switch-status').text(response.message);
+                    console.log('Switch state change response:', response);
+                },
+                error: function(error) {
+                    console.log('Error during switch state change:', error);
+                }
+                });
+        });
+
+        // Event handler for model file upload (upload-button)
+        $('#model-file-upload').change(function() {
+            var selectedFile = $(this).prop('files')[0];
+
+            formData.append('model-file-upload', selectedFile);
+
+            var modelName = selectedFile.name; // Utiliser le nom du fichier comme nom du modèle
+            formData.append('model-name', modelName); // Ajouter le nom du modèle à formData
+
+            // Réinitialiser le contenu de load-model-status
+            $('#load-model-status').text('');
+
+            $.ajax({
+                url: '/save_model',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    // Handle the response from the server
+                    $('#load-model-status').text(response.message);
+                    console.log('Model file upload response:', response);
+                },
+                error: function(error) {
+                    console.log('Error while uploading the model file:', error);
+                }
+            });
+        });
+
+        // Event handler for image file upload
+        $('#btn-browser').change(function() {
+            var selectedFile = $(this).prop('files')[0];
+            formData.append('image-file-upload', selectedFile);
+
+            var fileName = selectedFile.name; // Récupérer le nom du fichier
+            formData.append('image-name', fileName); // Ajouter le nom du fichier à formData
+
+            $.ajax({
+            url: '/upload_image',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                // Handle the response from the server
+                $('#message_image').text(response.message);
+                console.log('Image file upload response:', response);
+            },
+            error: function(error) {
+                console.log('Error while uploading the image file:', error);
+            }
+            });
+        });
+
+        // Event handler for inference process
+        $('#btn-process_inference').click(function() {
+            var loadModelStatus = $('#load-model-status').text();
+            var messageImage = $('#message_image').text();
+            var switchStatus = $('input[name="switch"]:checked').val();
+            var concat = $('#concat-input').val();
+            var saving = $('#saving-input').val();
+            var pixelRes = ($('#pixel-resolution-input').val());
+            var paddingShift = $('#padding-shift-input').val();
+
+            var data = {
+                loadModelStatus: loadModelStatus,
+                messageImage: messageImage,
+                state: switchStatus,
+                concat: concat,
+                saving: saving,
+                pixelRes: pixelRes,
+                paddingShift: paddingShift,
+            };
+
+            $.ajax({
+                url: '/process_image',
+                type: 'POST',
+                data: data,
+                dataType: 'json',
+                success: function(response) {
+                    // Handle the response from the server
+                    $('#message_inference').text(response.message);
+                    console.log('Image processing response:', response);
+                },
+                error: function(error) {
+                    console.log('Error during image processing:', error);
+                }
+            });
+        });
+
+    });
+
+</script>
+
+{% endblock %}
+

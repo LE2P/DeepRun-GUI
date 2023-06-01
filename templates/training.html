@@ -1,0 +1,273 @@
+<!--train.html-->
+<!--This is a page so the objective is to make fitting of a previous generated model-->
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h1 style="margin-top: 10px; margin-left: 20px;">Deep training</h1>
+
+<div style="background: ghostwhite; font-size: 16px; 
+padding: 10px; border: 1px solid lightgray; margin: 20px;">
+    <p align="justify">
+    <b>Training phase</b> enables centralized deep model learning from a provided dataset.
+    <br>
+    <b>Required</b> - A deep model must be generated before training and a dataset with correct input and target shapes must be provided.
+    <br>
+    <ul>
+        <li><b>Model</b></li> - Select a model to train in <i>Model pageweb</i>. The model must be in a tensorflow format (h5, pb, ckpt, saved_model).
+        <li><b>Dataset</b></li> - Select a dataset to train the model. The dataset must be in a numpy format or a csv format containing the dataset folders patches (train-validation-test).
+        <li><b>Parameters</b></li> - Select the parameters for the training. The parameters are the same as the tensorflow fit function.
+        <ul>
+            <li><b>Optimizer</b></li> - Optimizer algorithm is used to minimize the loss function. Severals algorithms are implemented here (Adam, SGD, RMSprop, Adagrad, Adadelta, Adamax, Nadam, Ftrl).
+            <li><b>Learning rate</b></li> - The learning rate is a hyperparameter that controls how much to change the model in response to the estimated error each time the model weights are updated.
+            <li><b>Data use percent</b></li> - Data use percent is a hyperparameter that controls how much data to use for all the training/val/test phase. 
+            If the value is 1, all the data will be used for training/val/test phase. If the value is 0.5, half of the data will be used for training/val/test phase. 
+            Depending on the computer ressources and the dataset size, it is recommended to use a small data use percent. For a complete training, please use all the dataset.
+            <li><b>Epochs</b></li> - The number of epochs is a hyperparameter that defines the number times that the learning algorithm will work through the entire training dataset.
+            <li><b>Batch size</b></li> - The batch size is a hyperparameter that defines the number of samples to work through before updating the internal model parameters.
+            <li><b>Train split</b></li> - The train split is a hyperparameter that defines the percentage of the dataset to use for the model training considering the <i>Data use percent</i> reduction.
+            <li><b>Validation split</b></li> - The validation split is a hyperparameter that defines the percentage of the dataset to use for the model validation considering the <i>Data use percent</i> reduction.
+            <li><b>Test split</b></li> - The test split is a hyperparameter that defines the percentage of the dataset to use for the model test considering the <i>Data use percent</i> reduction. 
+            Contrary to the other hyperparameters, the one here is calculated automatically 
+        </ul>
+    </ul>
+    </p>
+</div>
+
+<div style="font-size: 16px; padding: 10px; margin-left: 100px; margin-right: 200px;">
+
+    <div id="result-container-model">
+        <button id="check-model" class="fun-button">Model ?</button>
+        <p id="result-text-model">Please check me</p>
+    </div>
+      
+    <p class="title">1. Load data</p>
+    <div>
+        <label for="input-file-x">Select input file X:</label>
+        <input type="file" id="input-file-x">
+    </div>
+    <div id="progress-container-x">
+        <div id="progress-bar-x"></div>
+        <div id="time-remaining-x"></div><div id="progress-label-x">0%</div>
+    </div>
+    <!-- Plot a sample of the data -->
+    <div id="plot-x"></div>
+    
+    <div>
+        <label for="input-file-y">Select input file Y:</label>
+        <input type="file" id="input-file-y">
+    </div>
+    <div id="progress-container-y">
+        <div id="progress-bar-y"></div>
+        <div id="time-remaining-y"></div><div id="progress-label-y">0%</div>
+    </div>
+    <!-- Plot a sample of the data -->
+    <div id="plot-y"></div>
+
+    <!-- just continously display a static image, a file in the subfolder of this project -->
+
+
+    <br>
+    <p class="title">2. Define some parameters</p>
+    <div>
+        <label for="optimizer">Optimizer:</label>
+        <select id="optimizer" name="optimizer">
+            <option value="adam">Adam</option>
+            <option value="sgd">SGD</option>
+            <option value="rmsprop">RMSprop</option>
+            <option value="adagrad">Adagrad</option>
+            <option value="adadelta">Adadelta</option>
+            <option value="adamax">Adamax</option>
+            <option value="nadam">Nadam</option>
+            <option value="ftrl">Ftrl</option>
+        </select>
+    </div>
+    <br>
+    <div>
+        <label for="learning_rate">Learning rate:</label>
+        <input type="text" id="learning_rate" name="learning_rate" value="0.001" size="5">
+    </div>
+    <div>
+        <label for="data_use">Data use percent:</label>
+        <input type="text" id="data_use" name="data_use" value="0.01" size="5">
+    </div>
+    <br>
+    <div>
+        <label for="epochs">Epochs:</label>
+        <input type="text" id="epochs" name="epochs" value="10" size="5">
+    </div>
+    <div>
+        <label for="batch-size">Batch size:</label>
+        <input type="text" id="batch-size" name="batch-size" value="32" size="5">
+    </div>
+    <br>
+    <div>
+        <label for="train-split">Train split on all dataset:</label>
+        <input type="text" id="train-split" name="train-split" value="0.5" size="5">
+    </div>
+    <div>
+        <label for="validation-split">Validation split on the remaining dataset (x/train_split):</label>
+        <input type="text" id="validation-split" name="validation-split" value="0.2" size="5">
+    </div>
+    <br>
+    <div>
+        <button id="start-training" class="fun-button">Start Training</button>
+    </div>
+
+    <div id="training-result"></div>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- 
+<script src="js/progressbar.js"></script>
+<script src="js/progressbar.min.js"></script>
+<script src="js/progressbar.min.js.map"></script>
+-->
+
+<script>
+    $(document).ready(function() {
+
+        // Check model
+        $('#check-model').click(function() {
+            $.ajax({
+                url: '/check-model',
+                type: 'GET',
+                success: function(response) {
+                    $('#result-text-model').text(response.message);
+                },
+                error: function() {
+                    $('#result-text-model').text('Error the model is missing!').addClass('red-text');
+                }
+                });
+            });
+
+        // Listen to x browser button
+        $('#input-file-x').change(function() {
+            var selectedFile = $(this).prop('files')[0];
+            var formData = new FormData();
+            formData.append('x_file', selectedFile);
+            
+            // Call Flask API to upload the file
+            $.ajax({
+                url: '/upload_x',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                xhr: function() {
+                    var xhr = new window.XMLHttpRequest();
+                    // Handle progress updates
+                    xhr.upload.addEventListener('progress', function(e) {
+                        if (e.lengthComputable) {
+                            var percent = Math.round((e.loaded / e.total) * 100);
+                            $('#progress-bar-x').css('width', percent + '%');
+                            $('#progress-label-x').text('Progress: '+percent + '%');
+                            
+                            // Calculate time remaining
+                            var remainingBytes_x = e.total - e.loaded;
+                            var speedBytesPerMs_x = e.loaded / e.timeStamp;
+                            var remainingTimeMs_x = remainingBytes_x / speedBytesPerMs_x;
+                            var remainingTimeSec_x = Math.ceil(remainingTimeMs_x / 1000);
+                            $('#time-remaining-x').text('Time remaining: ' + remainingTimeSec_x + ' seconds');
+                        }
+                    });
+                    return xhr;
+                },
+                success: function(response) {
+                    // Display success message
+                    $('#message_x').text(response.message);
+                    // Display the plot of the image
+                    var image = $('<img>').attr('src', 'routes/img/sample_plot-x.png');
+                    $('#plot-x').html(image);
+                },
+                error: function(error) {
+                    // Display error message
+                    $('#message_x').text('Error while uploading the X file!').addClass('red-text');
+                }
+            });
+        });
+
+        // Listen to y browser button
+        $('#input-file-y').change(function() {
+            var selectedFile = $(this).prop('files')[0];
+            var formData = new FormData();
+            formData.append('y_file', selectedFile);
+            
+            // Call Flask API to upload the file
+            $.ajax({
+                url: '/upload_y',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                xhr: function() {
+                    var xhr = new window.XMLHttpRequest();
+                    // Handle progress updates
+                    xhr.upload.addEventListener('progress', function(e) {
+                        if (e.lengthComputable) {
+                            var percent = Math.round((e.loaded / e.total) * 100);
+                            $('#progress-bar-y').css('width', percent + '%');
+                            $('#progress-label-y').text('Progress: '+percent + '%');
+                            
+                            // Calculate time remaining
+                            var remainingBytes_y = e.total - e.loaded;
+                            var speedBytesPerMs_y = e.loaded / e.timeStamp;
+                            var remainingTimeMs_y = remainingBytes_y / speedBytesPerMs_y;
+                            var remainingTimeSec_y = Math.ceil(remainingTimeMs_y / 1000);
+                            $('#time-remaining-y').text('Time remaining: ' + remainingTimeSec_y + ' seconds');
+                        }
+                    });
+                    return xhr;
+                },
+                success: function(response) {
+                    // Display success message
+                    $('#message_y').text(response.message);
+                    var labelY = $('<p>').text('Label: ' + response.label);
+                    $('#plot-y').append(labelY);
+                },
+                error: function(error) {
+                    // Display error message
+                    $('#message_y').text('Error while uploading the Y file!').addClass('red-text');
+                }
+            });
+        });
+
+        // Start Training
+        $('#start-training').click(function() {
+            var epochs = $('#epochs').val();
+            var batch_size = $('#batch-size').val();
+            var train_split = $('#train-split').val();
+            var validation_split = $('#validation-split').val();
+            var optimizer = $('#optimizer').val();
+            var learning_rate = $('#learning_rate').val();
+            var data_use = $('#data_use').val();
+
+            $.ajax({
+                url: '/train',
+                type: 'POST',
+                data: JSON.stringify({
+                    'epochs': epochs,
+                    'batch_size': batch_size,
+                    'train_split': train_split,
+                    'validation_split': validation_split,
+                    'optimizer': optimizer,
+                    'learning_rate': learning_rate,
+                    'data_use': data_use
+            }),
+            contentType: 'application/json',
+            success: function(response) {
+                // Display success message
+                $('#training-result').text(response.message);
+            },
+            error: function(error) {
+                // Display error message
+                $('#training-result').text('Error while training the model!').addClass('red-text');
+            }
+            });
+        });
+    });
+
+</script>
+
+{% endblock %}

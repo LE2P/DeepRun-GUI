@@ -1,0 +1,118 @@
+<!--metadata.html-->
+<!--This page allows to read all optical image metadata, only the .tif .tiff format file-->
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h1 style="margin-top: 10px; margin-left: 20px;">Metadata viewer</h1>
+
+<div style="background: ghostwhite; font-size: 16px; 
+padding: 10px; border: 1px solid lightgray; margin: 20px;">
+    <p align="justify">
+    <b>Metadata tools</b> enlables the opening of a .tif or .tiff image to extract all the metadata.
+    <br>
+    <br>
+    <b>Content extracted</b> - filename : Name of the file,
+    <b>width</b> : Width of the image,
+    <b>height</b> : Height of the image,
+    <b>bands</b> : Number of bands in the image,
+    <b>projection</b> : Image projection,
+    <b>geotransform</b> : Geographic transformation of the image,
+    <b>ulx</b> : X coordinate of the upper left corner,
+    <b>uly</b> : Y coordinate of the upper left corner,
+    <b>xres</b> : Resolution in X axis,
+    <b>yres</b> : Resolution in Y axis,
+    <b>lrx</b> : X coordinate of the lower right corner,
+    <b>lry</b> : Y coordinate of the lower right corner,
+    <b>area</b> : Right-of-way area.
+</div>
+
+<div style="font-size: 16px; padding: 10px; margin-left: 100px; margin-right: 200px;">
+    <p class="title">Metadata Extraction</p>
+    <br>
+    <input type="file" id="btn-browser" accept=".tif, .tiff" />
+    <br>
+    <div id="message_image"></div>
+    <br>
+    <button id="btn-process_tiff">Process Image</button>
+    <br>
+    <div id="metadata"></div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        var formData = new FormData(); // Déclarer la variable formData ici pour qu'elle soit accessible dans les deux fonctions
+
+        $('#btn-browser').change(function() {
+            var selectedFile = $(this).prop('files')[0];
+            formData.append('image', selectedFile);
+            console.log('File path : ' + selectedFile.webkitRelativePath);
+            
+            $.ajax({
+                url: '/upload_image_metadata',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    // Display success message
+                    $('#message_image').text(response.message);
+                },
+                error: function(error) {
+                    // Display error message
+                    $('#message_image').text('Error while uploading the image file.');
+                }
+            });
+        });
+        
+        $('#btn-process_tiff').click(function() {
+            var fileInput = document.getElementById('btn-browser');
+            var file = fileInput.files[0];
+            formData.append('image', file);
+
+            $.ajax({
+                url: '/process_image_metadata',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    var metadata = response.metadata;
+                    // Définir l'ordre des clés à afficher
+                    var keyOrder = ['File name', 'Width', 'Height', 'Number of bands', 
+                    'Pixel width (resolution)', 'Pixel height (resolution)', 'Projection system', 
+                    'Geotransform coordinates', 'Upper left x (reference)', 'Upper left y (reference)', 
+                    'Lower right x', 'Lower right y', 'Right-of-way area'];
+
+                    var metadataHtml = '<ul>';
+
+                    // Parcourir les clés dans l'ordre souhaité
+                for (var i = 0; i < keyOrder.length; i++) {
+                    var key = keyOrder[i];
+                    if (metadata.hasOwnProperty(key)) {
+                        var value = metadata[key];
+
+                        // Formater le système de projection sur plusieurs lignes
+                        if (key === 'Projection system') {
+                            value = value.replace(/,/g, ',<br>');
+                        }
+
+                        metadataHtml += '<li><strong>' + key + ':</strong> ' + value + '</li>';
+                    }
+                }
+
+                metadataHtml += '</ul>';
+
+                    $('#metadata').html(metadataHtml);
+                },
+                error: function(error) {
+                    $('#metadata').text('Error while processing the image.');
+                }
+            });
+        });
+    });
+</script>
+
+
+{% endblock %}

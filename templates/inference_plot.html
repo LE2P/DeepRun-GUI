@@ -1,0 +1,219 @@
+<!--inference_ploy.html-->
+<!--This is a page to plot the inference results-->
+{% extends "layout.html" %}
+
+{% block content %}
+
+<!--Add jQuery library-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<!--Title-->
+<h1 style="margin-top: 10px; margin-left: 20px;">Inference plotting</h1>
+
+<!--Description-->
+<div style="background: ghostwhite; font-size: 16px; 
+padding: 10px; border: 1px solid lightgray; margin: 20px;">
+  <p align="justify">
+  <b>Inference plotting</b> enables plot generation and conversion of an inference results.
+  <br>
+  <b>Required</b> - A folder containing inference results and the original image to transfer the geographic metadata.
+  These informations are automatically imported if an inference process has been performed. During the inference process, the image tiff is truncated 
+  into several images for simplify the inference process. The inference plotting process allows to reassemble these images into a single image.
+  <br>
+  <ul>
+    <li><b>Folder path</b></li> - Select a folder containing inference results.
+    <li><b>Original image</b></li> - Select the original image used for inference process.
+    <li><b>Parameters</b></li> - Save format can be configured.
+    <ul>
+        <li><b>Format</b></li> - Select the format to save the inference results. TIFF format is recommended.
+        <li><b>Image dimensions</b></li> - Select the image dimensions and the pixel resolution.
+    </ul>
+  </p>
+</div>
+
+
+<div style="font-size: 16px; padding: 10px; margin-left: 100px; margin-right: 200px;">
+
+    <!-- Select subfolder in the tmp/inference folder -->
+    <p class="title">1. Select folder</p>
+
+    <form>
+        <label for="subfolders">Sous-dossiers :</label>
+        <select id="subfolders" name="subfolders"></select>
+    </form>
+    <br>
+
+    <!-- Give some information about the selected folder -->
+    <!-- Button to display the inference results -->
+    <button id="btn-process_subfolder" class="fun-button">Inference Results</button>
+    <p id="info_subfolder"></p>
+    <br>
+
+    <!-- Select original image -->
+    <p class="title">2. Select original image</p>
+
+    <form>
+        <label for="image_tiff">Images :</label>
+        <select id="image_tiff" name="image_tiff"></select>
+    </form>
+    <br>
+
+    <!-- Give some information about the selected folder -->
+    <!-- Button to display the image origin and coordonate system -->
+    <button id="btn-process_image_tiff" class="fun-button">Image Metadata</button>
+    <p id="image_metadata"></p>
+    <br>
+
+    <!-- Select the format to save the inference results, tiff or png -->
+    <p class="title">3. Select format</p>
+    <form>  
+        <input type="radio" id="tiff" name="format" value="tiff" checked>
+        <label for="tiff">TIFF</label><br>
+        <input type="radio" id="png" name="format" value="png">
+        <label for="png">PNG</label><br>
+    </form>
+    <br>
+
+    <!-- Dynamic inputs for img_width, img_height, and pixelRes -->
+    <p class="title">4. Image Dimensions</p>
+    <form id="image_dimensions_form">
+        <label for="img_width">Width:</label>
+        <input type="number" id="img_width" min="1" max="100000" value="25" step="1"><br>
+
+        <label for="img_height">Height:</label>
+        <input type="number" id="img_height" min="1" max="100000" value="25" step="1"><br>
+
+        <label for="pixelRes">Pixel Resolution:</label>
+        <input type="number" id="pixelRes" min="1" max="100000" value="0.5" step="0.1"><br>
+    </form>
+
+    <!-- Save the image button -->
+    <button id="btn-save_image" class="fun-button">Save image</button>
+    <br>
+    <!-- Information about the image -->
+    <p id="save_info"></p>
+
+</div>
+
+<script>
+
+    $(document).ready(function() {
+
+        // Get the subfolders
+        $.ajax({
+            url: '/get_subfolders',
+            type: 'GET',
+            success: function(response) {
+                // Update the select
+                var select = $('#subfolders');
+                response.forEach(function(subfolder) {
+                    select.append('<option value="' + subfolder + '">' + subfolder + '</option>');
+                });
+            },
+            error: function(error) {
+                console.log('Error while getting subfolders:', error);
+            }
+        });
+
+        // Manage the click on the button subfolder
+        $('#btn-process_subfolder').click(function() {
+            var selectedFolder = $('#subfolders').val();
+
+            // Send a request to get the subfolder info
+            $.ajax({
+                url: '/get_subfolder_info',
+                type: 'POST',
+                data: { folder: selectedFolder },
+                dataType: 'json',
+                success: function(response) {
+                    // Update the info paragraph
+                    var info = $('#info_subfolder');
+                    info.text('Nombre d\'éléments : ' + response.numItems);
+
+                    var sizeInMB = response.totalSize / (1024 * 1024);
+                    if (sizeInMB >= 1024) {
+                        var sizeInGB = sizeInMB / 1024;
+                        info.append('<br>Taille totale : ' + sizeInGB.toFixed(2) + ' Go');
+                    } else {
+                        info.append('<br>Taille totale : ' + sizeInMB.toFixed(2) + ' Mo');
+                    }
+                },
+                error: function(error) {
+                    console.log('Error while getting subfolder info:', error);
+                }
+            });
+
+            // Envoyer une requête AJAX pour obtenir tous les fichiers TIFF
+            $.ajax({
+                url: '/get_all_tiff_files',
+                type: 'POST',
+                dataType: 'json',
+                success: function(response) {
+                    // Mettre à jour la liste déroulante avec les fichiers TIFF
+                    var select = $('#image_tiff');
+                    select.empty(); // Supprimer les options précédentes
+                    response.forEach(function(file) {
+                        select.append('<option value="' + file + '">' + file + '</option>');
+                    });
+                },
+                error: function(error) {
+                    console.log('Error while getting TIFF files:', error);
+                }
+            });
+        });
+
+        // Manage the click on the button image
+        $('#btn-process_image_tiff').click(function() {
+            var selectedImage = $('#image_tiff').val();
+
+            // Send a request to get the image metadata
+            $.ajax({
+                url: '/get_image_metadata',
+                type: 'POST',
+                data: { image: selectedImage },
+                dataType: 'json',
+                success: function(response) {
+                    var maxCrsLength = 150; // Length of the CRS to display
+                    var truncatedCrs = response.crs.substring(0, maxCrsLength) + '...'; // Truncate the CRS if too long
+                    $('#image_metadata').html('Origins: ' + response.origins + '<br>CRS: ' + truncatedCrs);
+                },
+                error: function(error) {
+                    console.log('Error while getting image metadata:', error);
+                }
+            });
+        });
+
+        // Manage the click on the button save
+        $('#btn-save_image').click(function() {
+            var selectedFolder = $('#subfolders').val();
+            var selectedImage = $('#image_tiff').val();
+            var selectedFormat = $('input[name=format]:checked').val();
+            var imgWidth = $('#img_width').val();
+            var imgHeight = $('#img_height').val();
+            var pixelRes = $('#pixelRes').val();
+
+            // Send a request to save the image
+            $.ajax({
+                url: '/save_image',
+                type: 'POST',
+                data: { image: selectedImage, 
+                        folder: selectedFolder, 
+                        format: selectedFormat,
+                        imgWidth: imgWidth,
+                        imgHeight: imgHeight,
+                        pixelRes: pixelRes},
+                dataType: 'json',
+                success: function(response) {
+                    $('#save_info').text(response.message);
+                },
+                error: function(error) {
+                    console.log('Error while saving image:', error);
+                }
+            });
+        });
+
+    });
+
+</script>
+
+{% endblock %}
