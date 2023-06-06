@@ -134,6 +134,13 @@ This is an example of how to list things you need to use the software and how to
   pip install GDAL==<GDAL VERSION FROM OGRINFO>
   ```
 
+* Miscellaneous
+  pip install flask
+  pip install tensorflow
+  pip install scikit-learn
+  pip install matplotlib
+
+
 ### Installation
 
 Here is an example of how install and set up the application.
