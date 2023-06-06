@@ -76,7 +76,7 @@
 ## About The Project
 
 <div align="center">
-  <img src="static/screenshot_index.png" alt="Logo" width="800" height="500">
+  <img src="static/screenshot/screenshot_index.png" alt="Logo" width="800" height="500">
 </div>
 <br>
   
@@ -135,11 +135,12 @@ This is an example of how to list things you need to use the software and how to
   ```
 
 * Miscellaneous
+    ```sh
   pip install flask
   pip install tensorflow
   pip install scikit-learn
   pip install matplotlib
-
+  ```
 
 ### Installation
 
@@ -165,10 +166,72 @@ Here is an example of how install and set up the application.
 
 <!-- USAGE EXAMPLES -->
 ## Usage
+<br>
+Click on <b>Model</b> section.
+<div class="image-container">
+  <img src="static/screenshot/screenshot_modeling.png" alt="Logo" width="800" height="500">
+</div>
+Two options are available, generation of a deep model from source file or a set of parameters.
+<ul>
+  <li>Click on 'Browse' button and select a save model.
+  <ul>
+    <li style="color: grey;"><i>Status message</i>
+  </ul>
+  <li>Click on 'Generate model'
+    <ul>
+    <li style="color: grey;"><i>Model summary message</i>
+  </ul>
+</ul>
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+<br>
 
+Click on <b>Train</b> section.
+<div class="image-container">
+  <img src="static/screenshot/screenshot_training.png" alt="Logo" width="800" height="500">
+</div>
+<ul>
+  <li>Click on 'MODEL ?' button.
+  <ul>
+    <li style="color: grey;"><i>Status message</i>
+  </ul>
+  <li>Click on 'Browse X dataset' button and select the input dataset.
+  <ul>
+    <li style="color: grey;"><i>Import X dataset message</i>
+  </ul>
+  <li>Click on 'Browse Y dataset' button and select the targer dataset.
+  <ul>
+    <li style="color: grey;"><i>Import Y dataset message</i>
+  </ul>
+  <li>Click on 'START TRAINING' button.
+  <ul>
+    <li style="color: grey;"><i>Training summary message</i>
+  </ul>
+</ul>
+
+<br>
+
+Click on <b>Inference</b> section.
+<div class="image-container">
+  <img src="static/screenshot/screenshot_inference.png" alt="Logo" width="800" height="500">
+</div>
+<ul>
+  <li>Click on prefered model selection.
+  <ul>
+    <li style="color: grey;"><i>Model message</i>
+  </ul>
+  <li>Click on 'Browse' image button and select the input dataset.
+  <ul>
+    <li style="color: grey;"><i>Import image message</i>
+  </ul>
+  <li>Click on 'Process Image' button.
+  <ul>
+    <li style="color: grey;"><i>Inference summary message</i>
+  </ul>
+</ul>
+
+<!--
 _For more examples, please refer to the [Documentation](https://example.com)_
+-->
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
