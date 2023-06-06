@@ -6,52 +6,55 @@
 
 <h1 style="margin-top: 10px; margin-left: 20px;">Deep modeling</h1>
 
-<div style="background: ghostwhite; font-size: 16px; padding: 10px; border: 1px solid lightgray; margin: 20px;">
-
+<div class="text-box">
     <p align="justify">
-    <b>Modeling phase</b> enables centralized deep model generation from a provided set of parameters. 
-    At this time and regarding the needs of the project, only deep convolutional models are available.
-    Convolutional neural network (CNN) is a class of deep neural networks, most 
-    commonly applied to analyzing visual imagery. The program automatically detects the presence or absence of a graphics engine for the training process.
-    Two methods of model generation are implemented: from source or from scratch. 
-    <ul>
-        <li><b>From source</b> - The model is generated from a file containing the model configuration.</li>
-        <li><b>From parameters</b> - The model is generated from a set of parameters.</li>
-    </ul>
-    <b>1. From source</b> - Parses a model configuration file and returns a model instance, whatever the model type is.
-    <ul>
-        <!--Blank model / Pre-trained model-->
-        <li><b>Blank model</b></li>
+        <b>Modeling phase</b> enables centralized deep model generation from a provided set of parameters. 
+        At this time and regarding the needs of the project, only deep convolutional models are available.
+        Convolutional neural network (CNN) is a class of deep neural networks, most 
+        commonly applied to analyzing visual imagery. The program automatically detects the presence or absence of a graphics engine for the training process.
+        Two methods of model generation are implemented: from source or from scratch. 
         <ul>
-            <li><b>YAML</b> - YAML (YAML Ain't Markup Language) is a more human-readable data serialization 
-                format that is often used for complex data configuration and representation. 
-                <i>Method `model.to_yaml()` has been removed due to security risk of arbitrary code execution.
-                Please use `model.to_json()` instead.</i></li>
-            <li><b>JSON</b> - (JavaScript Object Notation) JSON is a widely used data format for serializing 
-                and exchanging structured data. </li>
+            <li><b>1. From source</b> - The model is generated from a file containing the model configuration.</li>
+            <li><b>2. From parameters</b> - The model is generated from a set of parameters.</li>
         </ul>
-        <!--Saved model / GraphDef / Checkpoint / HDF5-->
-        <li><b>Pre-trained model</b></li>
-        <ul>
-            <li><b>Saved model</b> - This is the standard format for saving TensorFlow models. 
-                A saved model is a directory containing binary files that represent the model architecture, 
-                parameter weights, and configuration information.</li>
-            <li><b>GraphDef</b> - A GraphDef protocol buffer, which represents the structure of a TensorFlow.</li>
-            <li><b>Checkpoint</b> - A training checkpoint is a binary file containing the state of a TensorFlow model 
-                at a certain point in training. This includes the graph data structure, the values of all model parameters, 
-                and the optimizer parameters.</li>
-            <li><b>HDF5</b> - HDF5 is a data model, library, and file format for storing and managing data.</li>
-        </ul>
-    </ul>
-    <br>
-    <b>2. From parameters</b> - Generate a blank tensorflow model from a set of fixed parameters. The model design is conditionned to DeepRun project needs and by the following parameters:
-    <ul>
-    <li><b></b>Number of convolutional layers for features extraction.</b></li>
-    <li><b></b>Number of dense layers for classification.</b></li>
-    <li><b></b>Number of convolutional kernels.</b></li>
-    <li><b></b>Number of dense neurons.</b></li>
+        <details close>
+            <summary class="summary-color">Click to display/hide details</summary>
+            <br>
+            <b>1. From source</b> - Parses a model configuration file and returns a model instance, whatever the model type is.
+            <ul>
+                <!--Blank model / Pre-trained model-->
+                <li><b>Blank model</b></li>
+                <ul>
+                    <li><b>YAML</b> - YAML (YAML Ain't Markup Language) is a more human-readable data serialization 
+                        format that is often used for complex data configuration and representation. 
+                        <i>Method `model.to_yaml()` has been removed due to security risk of arbitrary code execution.
+                        Please use `model.to_json()` instead.</i></li>
+                    <li><b>JSON</b> - (JavaScript Object Notation) JSON is a widely used data format for serializing 
+                        and exchanging structured data. </li>
+                </ul>
+                <!--Saved model / GraphDef / Checkpoint / HDF5-->
+                <li><b>Pre-trained model</b></li>
+                <ul>
+                    <li><b>Saved model</b> - This is the standard format for saving TensorFlow models. 
+                        A saved model is a directory containing binary files that represent the model architecture, 
+                        parameter weights, and configuration information.</li>
+                    <li><b>GraphDef</b> - A GraphDef protocol buffer, which represents the structure of a TensorFlow.</li>
+                    <li><b>Checkpoint</b> - A training checkpoint is a binary file containing the state of a TensorFlow model 
+                        at a certain point in training. This includes the graph data structure, the values of all model parameters, 
+                        and the optimizer parameters.</li>
+                    <li><b>HDF5</b> - HDF5 is a data model, library, and file format for storing and managing data.</li>
+                </ul>
+            </ul>
+            <br>
+            <b>2. From parameters</b> - Generate a blank tensorflow model from a set of fixed parameters. The model design is conditionned to DeepRun project needs and by the following parameters:
+            <ul>
+                <li><b></b>Number of convolutional layers for features extraction.</b></li>
+                <li><b></b>Number of dense layers for classification.</b></li>
+                <li><b></b>Number of convolutional kernels.</b></li>
+                <li><b></b>Number of dense neurons.</b></li>
+            </ul>
+        </details>
     </p>
-
 </div>
 
 <div style="font-size: 16px; padding: 10px; margin-left: 100px; margin-right: 200px;">

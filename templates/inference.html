@@ -11,28 +11,32 @@
 <h1 style="margin-top: 10px; margin-left: 20px;">Image inference</h1>
 
 <!--Description-->
-<div style="background: ghostwhite; font-size: 16px; 
-padding: 10px; border: 1px solid lightgray; margin: 20px;">
-  <p align="justify">
-  <b>Inference phase</b> enables segmentation of a single image regarding a trained model.
-  <br>
-  <b>Required</b> - A deep model must be generated/trained before inference phase.
-  <br>
-  <ul>
-    <li><b>Model</b></li> - Select a deep model for inference process. Either it is a pre-trained model via deepRun application, 
-    or a pre-trained model from an other way.
-    <li><b>Image</b></li> - Select an image to segmentation. (TODO: multiple images, and image folder)
-    The program automatically detects the presence or absence of a graphics engine for the inference process.
-    <li><b>Parameters</b></li> - The inference process can be configured with three parameters:
-    <ul>
-      <li><b>Concat</b></li> - The number of images to concatenate before inference process. 
-      This parameter is useful for the inference process of large images. If a performing graphics engine with large memory is available, 
-      it is recommended to increase this parameter. 
-      <li><b>Saving</b></li> - The number of images to save before inference process. 
-      This parameter is useful for the inference process of large images. Be careful, the saving process is time consuming.
-      <li><b>Pixel resolution</b></li> - The pixel resolution of the image to be segmented.
-    </ul>
-  </p>
+<div class="text-box">
+    <p align="justify">
+        <b>Inference phase</b> enables segmentation of a single image regarding a trained model.
+        <br>
+        <b>Required</b> - A deep model must be generated/trained before inference phase.
+        <br>
+        <details close>
+            <summary class="summary-color">Click to display/hide details</summary>
+            <br>
+            <ul>
+                <li><b>1. Model</b></li> - Select a deep model for inference process. Either it is a pre-trained model via deepRun application, 
+                or a pre-trained model from an other way.
+                <li><b>2. Image</b></li> - Select an image to segmentation. (TODO: multiple images, and image folder)
+                The program automatically detects the presence or absence of a graphics engine for the inference process.
+                <li><b>3. Parameters</b></li> - The inference process can be configured with three parameters:
+                <ul>
+                    <li><b>Concat</b></li> - The number of images to concatenate before inference process. 
+                    This parameter is useful for the inference process of large images. If a performing graphics engine with large memory is available, 
+                    it is recommended to increase this parameter. 
+                    <li><b>Saving</b></li> - The number of images to save before inference process. 
+                    This parameter is useful for the inference process of large images. Be careful, the saving process is time consuming.
+                    <li><b>Pixel resolution</b></li> - The pixel resolution of the image to be segmented.
+                </ul>
+            </ul>
+        </details>
+    </p>
 </div>
 
 <div style="font-size: 16px; padding: 10px; margin-left: 100px; margin-right: 200px;">

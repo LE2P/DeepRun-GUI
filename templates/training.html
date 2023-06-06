@@ -6,42 +6,51 @@
 
 <h1 style="margin-top: 10px; margin-left: 20px;">Deep training</h1>
 
-<div style="background: ghostwhite; font-size: 16px; 
-padding: 10px; border: 1px solid lightgray; margin: 20px;">
+<div class="text-box">
     <p align="justify">
-    <b>Training phase</b> enables centralized deep model learning from a provided dataset.
-    <br>
-    <b>Required</b> - A deep model must be generated before training and a dataset with correct input and target shapes must be provided.
-    <br>
-    <ul>
-        <li><b>Model</b></li> - Select a model to train in <i>Model pageweb</i>. The model must be in a tensorflow format (h5, pb, ckpt, saved_model).
-        <li><b>Dataset</b></li> - Select a dataset to train the model. The dataset must be in a numpy format or a csv format containing the dataset folders patches (train-validation-test).
-        <li><b>Parameters</b></li> - Select the parameters for the training. The parameters are the same as the tensorflow fit function.
+        <b>Training phase</b> enables centralized deep model learning from a provided dataset.
+        <br>
         <ul>
-            <li><b>Optimizer</b></li> - Optimizer algorithm is used to minimize the loss function. Severals algorithms are implemented here (Adam, SGD, RMSprop, Adagrad, Adadelta, Adamax, Nadam, Ftrl).
-            <li><b>Learning rate</b></li> - The learning rate is a hyperparameter that controls how much to change the model in response to the estimated error each time the model weights are updated.
-            <li><b>Data use percent</b></li> - Data use percent is a hyperparameter that controls how much data to use for all the training/val/test phase. 
-            If the value is 1, all the data will be used for training/val/test phase. If the value is 0.5, half of the data will be used for training/val/test phase. 
-            Depending on the computer ressources and the dataset size, it is recommended to use a small data use percent. For a complete training, please use all the dataset.
-            <li><b>Epochs</b></li> - The number of epochs is a hyperparameter that defines the number times that the learning algorithm will work through the entire training dataset.
-            <li><b>Batch size</b></li> - The batch size is a hyperparameter that defines the number of samples to work through before updating the internal model parameters.
-            <li><b>Train split</b></li> - The train split is a hyperparameter that defines the percentage of the dataset to use for the model training considering the <i>Data use percent</i> reduction.
-            <li><b>Validation split</b></li> - The validation split is a hyperparameter that defines the percentage of the dataset to use for the model validation considering the <i>Data use percent</i> reduction.
-            <li><b>Test split</b></li> - The test split is a hyperparameter that defines the percentage of the dataset to use for the model test considering the <i>Data use percent</i> reduction. 
-            Contrary to the other hyperparameters, the one here is calculated automatically 
+            <li><b>1. Model</b> - Check the model availability.</li>
+            <li><b>2. Dataset</b> - Import custom dataset.</li>
+            <li><b>3. Parameters</b> - Define some training parameters.</li>
         </ul>
-    </ul>
+        <details close>
+            <summary class="summary-color">Click to display/hide details</summary>
+            <br>
+            <b>Required</b> - A deep model must be generated before training and a dataset with correct input and target shapes must be provided.
+            <br>
+            <ul>
+                <li><b>1. Model</b></li> - Select a model to train in <i>Model pageweb</i>. The model must be in a tensorflow format (h5, pb, ckpt, saved_model).
+                <li><b>2. Dataset</b></li> - Select a dataset to train the model. The dataset must be in a numpy format or a csv format containing the dataset folders patches (train-validation-test).
+                <li><b>3. Parameters</b></li> - Select the parameters for the training. The parameters are the same as the tensorflow fit function.
+                <ul>
+                    <li><b>Optimizer</b></li> - Optimizer algorithm is used to minimize the loss function. Severals algorithms are implemented here (Adam, SGD, RMSprop, Adagrad, Adadelta, Adamax, Nadam, Ftrl).
+                    <li><b>Learning rate</b></li> - The learning rate is a hyperparameter that controls how much to change the model in response to the estimated error each time the model weights are updated.
+                    <li><b>Data use percent</b></li> - Data use percent is a hyperparameter that controls how much data to use for all the training/val/test phase. 
+                    If the value is 1, all the data will be used for training/val/test phase. If the value is 0.5, half of the data will be used for training/val/test phase. 
+                    Depending on the computer ressources and the dataset size, it is recommended to use a small data use percent. For a complete training, please use all the dataset.
+                    <li><b>Epochs</b></li> - The number of epochs is a hyperparameter that defines the number times that the learning algorithm will work through the entire training dataset.
+                    <li><b>Batch size</b></li> - The batch size is a hyperparameter that defines the number of samples to work through before updating the internal model parameters.
+                    <li><b>Train split</b></li> - The train split is a hyperparameter that defines the percentage of the dataset to use for the model training considering the <i>Data use percent</i> reduction.
+                    <li><b>Validation split</b></li> - The validation split is a hyperparameter that defines the percentage of the dataset to use for the model validation considering the <i>Data use percent</i> reduction.
+                    <li><b>Test split</b></li> - The test split is a hyperparameter that defines the percentage of the dataset to use for the model test considering the <i>Data use percent</i> reduction. 
+                    Contrary to the other hyperparameters, the one here is calculated automatically 
+                </ul>
+            </ul>
+        </details>
     </p>
 </div>
 
 <div style="font-size: 16px; padding: 10px; margin-left: 100px; margin-right: 200px;">
 
+    <p class="title">1. Check model availability</p>
     <div id="result-container-model">
         <button id="check-model" class="fun-button">Model ?</button>
         <p id="result-text-model">Please check me</p>
     </div>
       
-    <p class="title">1. Load data</p>
+    <p class="title">2. Load data</p>
     <div>
         <label for="input-file-x">Select input file X:</label>
         <input type="file" id="input-file-x">
@@ -68,7 +77,7 @@ padding: 10px; border: 1px solid lightgray; margin: 20px;">
 
 
     <br>
-    <p class="title">2. Define some parameters</p>
+    <p class="title">3. Define some parameters</p>
     <div>
         <label for="optimizer">Optimizer:</label>
         <select id="optimizer" name="optimizer">

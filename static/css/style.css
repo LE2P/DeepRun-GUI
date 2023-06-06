@@ -46,6 +46,10 @@ color: orange;
     margin: 20px;
 }
 
+.summary-color {
+    color: blue;
+}
+
 /* Styles for the footer */
 .footer-basic {
     padding:40px 0;

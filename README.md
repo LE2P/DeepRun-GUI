@@ -177,7 +177,9 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 <!-- ROADMAP -->
 ## Roadmap
 
+- [x] Add default pre-trained model
 - [x] Add sample data
+- [ ] Add default dataset
 - [ ] Add others segmentation model
 - [ ] Add image bubbles tracking
 - [ ] Add Changelog
