@@ -1,48 +1,13 @@
-<!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
-<a name="DeepRun application"></a>
-<!--
-*** Thanks for checking out the Best-README-Template. If you have a suggestion
-*** that would make this better, please fork the repo and create a pull request
-*** or simply open an issue with the tag "enhancement".
-*** Don't forget to give the project a star!
-*** Thanks again! Now go create something AMAZING! :D
--->
-
-
-
-<!-- PROJECT SHIELDS -->
-<!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
-
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
+  <a href="https://www.energylab.re">
     <img src="static/deeprun.png" alt="Logo" width="300" height="90">
   </a>
-
   <h3 align="center">Deep Learning for Reunion Energy Autonomy</h3>
-
-  <p align="center">
-    A GUI application for deep learning model generation, model training and images inference!
-    <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
-    ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Request Feature</a>
-  </p>
+  <p align="center">A GUI application for deep learning model generation, model training and images inference!</p>
+  <br />
 </div>
-
-
 
 <!-- TABLE OF CONTENTS -->
 <details>
@@ -69,8 +34,7 @@
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
-
-
+<br />
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
@@ -78,12 +42,13 @@
 <div align="center">
   <img src="static/screenshot/screenshot_index.png" alt="Logo" width="800" height="500">
 </div>
-<br>
+<br />
   
 The main objective of the DeepRun postdoctoral project is to develop multi-scale image recognition tools, using Deep Learning algorithms, applied to the estimation of biomass resources for bioenergy production, and to the reliability of hydrogen converters for energy storage optimization.
 
 Here are the main features:
-* Model generation: a model instance is generated from a source file or a set of fixed parameters 
+
+* Model generation: a model instance is generated from a source file or a set of fixed parameters
 * Model training: a training phase can be performed from a given dataset and generated model
 * Image inference: image segmentation is done with the trained model and high-resolution imagery
 
@@ -93,25 +58,16 @@ Use the `README.md` to get started.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
 ### Built With
 
 List of main packages required by the application:
 
 [![TensorFlow Version](https://img.shields.io/badge/TensorFlow-2.10.1-brightgreen.svg)](https://github.com/tensorflow/tensorflow/releases/tag/v2.10.1)
-
 [![PyTorch Version](https://img.shields.io/badge/PyTorch-1.10.0-blue.svg)](https://github.com/pytorch/pytorch/releases/tag/v1.10.0)
-
 [![GDAL Version](https://img.shields.io/badge/GDAL-3.4.3-orange.svg)](https://github.com/OSGeo/gdal/releases/tag/v3.4.3)
-
 [![Flask Version](https://img.shields.io/badge/Flask-2.3.2-lightgrey.svg)](https://pypi.org/project/Flask/2.3.2/)
 
-
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -120,80 +76,104 @@ Here is an example of instructions for setting up your project locally. To get a
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install the required packages into a virtual environment.
+This is an example of how to list things you need to use the software and how to install them.
 
-* Install GPU drivers, CUDA and CUDNN for accelerated computations
+* Install GPU drivers, CUDA and CUDNN for accelerated computations. 
 
 * Create and load a virtual environment
-  ```sh
-  virtualenv --python python3.10 venv
-  source venv/bin/activate
-  ...
-  #'deactivate' to close the virtual environment
-  ```
+
+```sh
+sudo apt install python3-virtualenv
+python3 -m venv venv
+source ./venv/bin/activate
+
+#'deactivate' to close the virtual environment
+```
 
 * Install GDAL and Python bindings
-  ```sh
-  sudo apt-get install python<PYTHON VERSION>-dev
-  sudo add-apt-repository ppa:ubuntugis/ppa && sudo apt-get update
-  sudo apt-get update
-  sudo apt-get install gdal-bin
-  sudo apt-get install libgdal-dev
-  #Include these export into .bashrc
-  export CPLUS_INCLUDE_PATH=/usr/include/gdal
-  export C_INCLUDE_PATH=/usr/include/gdal
-  ogrinfo --version
-  pip install GDAL==<GDAL VERSION FROM OGRINFO>
-  ```
+
+```sh
+sudo apt-get install python<PYTHON VERSION>-dev
+sudo add-apt-repository ppa:ubuntugis/ppa && sudo apt-get update
+sudo apt-get update
+sudo apt-get install gdal-bin
+sudo apt-get install libgdal-dev
+#Include these export into .bashrc
+export CPLUS_INCLUDE_PATH=/usr/include/gdal
+export C_INCLUDE_PATH=/usr/include/gdal
+ogrinfo --version
+pip install GDAL==<GDAL VERSION FROM OGRINFO>
+```
+
+or using `gdal-config` :
+
+```sh
+sudo apt-get install pythonx.x-dev
+sudo add-apt-repository ppa:ubuntugis/ppa && sudo apt-get update
+sudo apt-get install libgdal-dev gdal-bin
+export CPLUS_INCLUDE_PATH=$(gdal-config --cflags | sed 's/-I//')
+export C_INCLUDE_PATH=$(gdal-config --cflags | sed 's/-I//')
+pip install GDAL==$(gdal-config --version)
+```
 
 * Install miscellaneous packages
-    ```sh
-  pip install flask
-  pip install tensorflow
-  pip install scikit-learn
-  pip install matplotlib
-  ```
+
+```sh
+pip install flask
+pip install tensorflow
+pip install scikit-learn
+pip install matplotlib
+pip install rasterio
+pip install tqdm
+```
 
 ### Alternative prerequisites
 
 Setting up an environment does not ensure reproducibility of results, as this will depend on hardware, compilers and operating software. One solution is to deploy containers. In particular here, using Apptainer software (previously known as Singularity), which enables application-level virtualization without the need of administrator rights.
 
 * Assuming apptainer is installed (please contact the administrator), build the container
-  ```sh
-  apptainer build container/le2p.sif container/le2p.def
-  ```
+
+```sh
+apptainer build container/le2p.sif container/le2p.def
+```
 
 * Running as a shell without administrator rights
-  ```sh
-  # --nv flag for GPU access | --bind flag if working space is outside of home directory
-  apptainer shell --nv --bind /<Origin directory>/:/<Destination directory>/ container/le2p.sif
-  ...
-  ```
+
+```sh
+# --nv flag for GPU access 
+# --bind flag if working space is outside of home directory
+apptainer shell --nv --bind /<Origin directory>/:/<Destination directory>/ container/le2p.sif
+...
+```
 
 ### Installation
 
 Here is an example of how install and set up the DeepRun application.
 
 1. Clone the repo
-   ```sh
+
+```sh
    git clone https://github.com/christophe-lkc/Deep-API.git
-   ```
+```
+
 2. Install required packages
-   ```sh
+
+```sh
    pip install -r settings/requirements.txt
-   ```
+```
+
 3. Navigate to the project directory and start the application
-   ```sh
+
+```sh
    cd Deep-API
    flask run
-   ```
+```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
 <!-- USAGE EXAMPLES -->
 ## Usage
+
 <br>
 Click on <b>Model</b> section.
 <div class="image-container">
@@ -257,34 +237,26 @@ Click on <b>Inference</b> section.
   </ul>
 </ul>
 
-<!--
-_For more examples, please refer to the [Documentation](https://example.com)_
--->
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- ROADMAP -->
 ## Roadmap
 
-- [x] Add default pre-trained model
-- [x] Add sample data
-- [ ] Add default dataset
-- [ ] Add others segmentation model
-- [ ] Add image bubbles tracking
-- [ ] Add Changelog
-- [ ] Add back to top links
-- [ ] Add Additional Templates w/ Examples
-- [ ] Multi-language Support
-    - [ ] Chinese
-    - [ ] Spanish
+* [x] Add default pre-trained model
+* [x] Add sample data
+* [ ] Add default dataset
+* [ ] Add others segmentation model
+* [ ] Add image bubbles tracking
+* [ ] Add Changelog
+* [ ] Add back to top links
+* [ ] Add Additional Templates w/ Examples
+* [ ] Multi-language Support
+  * [ ] Chinese
+  * [ ] Spanish
 
 See the [open issues](https://github.com/christophe-lkc/Deep-API/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- CONTRIBUTING -->
 ## Contributing
@@ -311,20 +283,16 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
 <!-- CONTACT -->
 ## Contact
 
-Christophe LIN-KWONG-CHON - [@contact](https://www.energylab.re/en/membres/) - christophe.lin-kwong-chon@univ-reunion.fr
+Christophe LIN-KWONG-CHON - <christophe.lin-kwong-chon@univ-reunion.fr>
 
-Mathieu DELSAUT - [@contact](https://www.energylab.re/en/membres/) - mathieu.delsault@univ-reunion.fr
+Mathieu DELSAUT - <mathieu.delsaut@univ-reunion.fr>
 
-Project Link: [DeepRun](https://www.energylab.re/en/projets/projets-en-cours/deeprun/)
+Project link : [DeepRun](https://www.energylab.re/en/projets/projets-en-cours/deeprun/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
@@ -332,14 +300,11 @@ Project Link: [DeepRun](https://www.energylab.re/en/projets/projets-en-cours/dee
 This work, registered as the “DeepRun” project, was supported partly by the European Union through the
 European Regional Development Fund (under Grant 2014FR16RFOP007), by the Reunion Island Region (under Grant GURDTI/20210802-0030854) and by University of Reunion Island.
 
-
 * [European Regional Development Fund](https://ec.europa.eu/regional_policy/funding/erdf_en)
 * [Reunion Island Region](https://regionreunion.com/)
 * [University of Reunion Island](https://www.univ-reunion.fr/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
