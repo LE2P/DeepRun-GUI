@@ -8,6 +8,8 @@ import re
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
 from tools.cirad_legend import CiradLegend
 
 @app.route('/get_subfolders')
@@ -138,7 +140,7 @@ def save_image():
 
             #Write output
             driver = gdal.GetDriverByName('Gtiff')
-            dataset = driver.Create(output_path+'inference_'+filename.split('.')[0]+".tiff", ncols, nrows, 1, gdal.GDT_Byte)
+            dataset = driver.Create(output_path+'inference_'+filename.split('.')[0]+".tif", ncols, nrows, 1, gdal.GDT_Byte)
             dataset.SetGeoTransform(geotransform)
             dataset.SetProjection(sr)
             dataset.GetRasterBand(1).WriteArray(data_plot)
@@ -158,7 +160,7 @@ def save_image():
             plt.savefig(output_path+'inference_'+filename.split('.')[0]+".png")
             
         # Return success message and imagePath
-        return jsonify({'message': 'Image saved successfully! Location of the assembled image: '+output_path+'inference_'+filename+".tiff"})
+        return jsonify({'message': 'Image saved successfully! Location of the assembled image: '+output_path+'inference_'+filename+".tif"})
 
 
 

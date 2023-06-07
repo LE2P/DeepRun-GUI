@@ -135,105 +135,103 @@ def train_model():
     train_size = train_split
     val_size = val_split/train_split
 
-    # Perform training using the loaded files
-    try:
-        # Charger les fichiers d'entrée X et Y
-        X = np.load(paths.train_path + 'X.npy')
-        Y = np.load(paths.train_path + 'Y.npy')
-        print('[1/6] Data correctly loaded.')
+    # Charger les fichiers d'entrée X et Y
+    X = np.load(paths.train_path + 'X.npy')
+    Y = np.load(paths.train_path + 'Y.npy')
+    print('[1/6] Data correctly loaded.')
 
-        # Check if y is superior to 3 columns
-        if Y.shape[1] > 3:
-            #keep last 3 columns
-            Y = Y[:,-3:]
+    # Check if y is superior to 3 columns
+    if Y.shape[1] > 3:
+        #keep last 3 columns
+        Y = Y[:,-3:]
 
-        X, XX, Y, YY = train_test_split(X, Y, train_size=data_used, shuffle=True)
-        del XX, YY
-        Xtrain, Xrem, Ytrain, Yrem = train_test_split(X, Y, train_size=train_size, shuffle=True)
-        Xval, Xtest, Yval, Ytest = train_test_split(Xrem, Yrem, train_size=val_size, shuffle=True)
+    X, XX, Y, YY = train_test_split(X, Y, train_size=data_used, shuffle=True)
+    del XX, YY
+    Xtrain, Xrem, Ytrain, Yrem = train_test_split(X, Y, train_size=train_size, shuffle=True)
+    Xval, Xtest, Yval, Ytest = train_test_split(Xrem, Yrem, train_size=val_size, shuffle=True)
 
-        print("X shape :"+str(X.shape))
-        print("Y shape :"+str(Y.shape))
-        print("Xtrain shape :"+str(Xtrain.shape))
-        print("Ytrain shape :"+str(Ytrain.shape))
-        print("Xval shape :"+str(Xval.shape))
-        print("Yval shape :"+str(Yval.shape))
-        print("Xtest shape :"+str(Xtest.shape))
-        print("Ytest shape :"+str(Ytest.shape))
+    print("X shape :"+str(X.shape))
+    print("Y shape :"+str(Y.shape))
+    print("Xtrain shape :"+str(Xtrain.shape))
+    print("Ytrain shape :"+str(Ytrain.shape))
+    print("Xval shape :"+str(Xval.shape))
+    print("Yval shape :"+str(Yval.shape))
+    print("Xtest shape :"+str(Xtest.shape))
+    print("Ytest shape :"+str(Ytest.shape))
 
-        Ytrain_cat = [tf.keras.utils.to_categorical(Ytrain[:,a]-1, dtype='uint8') for a in range(Ytrain.shape[1])]
-        Yval_cat = [tf.keras.utils.to_categorical(Yval[:,a]-1, dtype='uint8') for a in range(Yval.shape[1])]
-        Ytest_cat = [tf.keras.utils.to_categorical(Ytest[:,a]-1, dtype='uint8') for a in range(Ytest.shape[1])]
+    Ytrain_cat = [tf.keras.utils.to_categorical(Ytrain[:,a]-1, dtype='uint8') for a in range(Ytrain.shape[1])]
+    Yval_cat = [tf.keras.utils.to_categorical(Yval[:,a]-1, dtype='uint8') for a in range(Yval.shape[1])]
+    Ytest_cat = [tf.keras.utils.to_categorical(Ytest[:,a]-1, dtype='uint8') for a in range(Ytest.shape[1])]
 
-        print("Ytrain_cat level 1 shape :"+str(Ytrain_cat[0].shape))
-        print("Yval_cat level 2 shape :"+str(Yval_cat[1].shape))
-        print("Ytest_cat level 3 shape :"+str(Ytest_cat[2].shape))
+    print("Ytrain_cat level 1 shape :"+str(Ytrain_cat[0].shape))
+    print("Yval_cat level 2 shape :"+str(Yval_cat[1].shape))
+    print("Ytest_cat level 3 shape :"+str(Ytest_cat[2].shape))
 
-        # Load the model
-        model_path = paths.modeling_path + 'model/'
-        model = tf.keras.models.load_model(model_path)
-        print(model)
-        print('[2/6] Model correctly loaded.')
+    # Load the model
+    model_path = paths.modeling_path + 'model/'
+    model = tf.keras.models.load_model(model_path)
+    print(model)
+    print('[2/6] Model correctly loaded.')
 
-        # Change optimizer adam, sgd, rmsprop, adagrad, adadelta, adamax, nadam, ftrl
-        if optimizer == 'adam':
-            optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate,
-                                                    beta_1=0.9, beta_2=0.999, epsilon=1e-07)
-        elif optimizer == 'sgd':
-            optimizer = tf.keras.optimizers.SGD(learning_rate=learning_rate, 
-                                                momentum=0.0, nesterov=False)
-        elif optimizer == 'rmsprop':   
-            optimizer = tf.keras.optimizers.RMSprop(learning_rate=learning_rate)
-        elif optimizer == 'adagrad':
-            optimizer = tf.keras.optimizers.Adagrad(learning_rate=learning_rate, 
-                                                    initial_accumulator_value=0.1, epsilon=1e-07)
-        elif optimizer == 'adadelta':
-            optimizer = tf.keras.optimizers.Adadelta(learning_rate=learning_rate, 
-                                                        rho=0.95, epsilon=1e-07)
-        elif optimizer == 'adamax':
-            optimizer = tf.keras.optimizers.Adamax(learning_rate=learning_rate, 
-                                                    beta_1=0.9, beta_2=0.999, epsilon=1e-07)
-        elif optimizer == 'nadam':
-            optimizer = tf.keras.optimizers.Nadam(learning_rate=learning_rate, 
-                                                    beta_1=0.9, beta_2=0.999, epsilon=1e-07)
-        elif optimizer == 'ftrl':
-            optimizer = tf.keras.optimizers.Ftrl(learning_rate=learning_rate, 
-                                                    learning_rate_power=-0.5, 
-                                                    initial_accumulator_value=0.1, 
-                                                    l1_regularization_strength=0.0, 
-                                                    l2_regularization_strength=0.0, 
-                                                    l2_shrinkage_regularization_strength=0.0)
-        else:
-            pass
-        model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics='accuracy')
-        print('[3/6] Model correctly loaded.')
+    # Change optimizer adam, sgd, rmsprop, adagrad, adadelta, adamax, nadam, ftrl
+    if optimizer == 'adam':
+        optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate,
+                                                beta_1=0.9, beta_2=0.999, epsilon=1e-07)
+    elif optimizer == 'sgd':
+        optimizer = tf.keras.optimizers.SGD(learning_rate=learning_rate, 
+                                            momentum=0.0, nesterov=False)
+    elif optimizer == 'rmsprop':   
+        optimizer = tf.keras.optimizers.RMSprop(learning_rate=learning_rate)
+    elif optimizer == 'adagrad':
+        optimizer = tf.keras.optimizers.Adagrad(learning_rate=learning_rate, 
+                                                initial_accumulator_value=0.1, epsilon=1e-07)
+    elif optimizer == 'adadelta':
+        optimizer = tf.keras.optimizers.Adadelta(learning_rate=learning_rate, 
+                                                    rho=0.95, epsilon=1e-07)
+    elif optimizer == 'adamax':
+        optimizer = tf.keras.optimizers.Adamax(learning_rate=learning_rate, 
+                                                beta_1=0.9, beta_2=0.999, epsilon=1e-07)
+    elif optimizer == 'nadam':
+        optimizer = tf.keras.optimizers.Nadam(learning_rate=learning_rate, 
+                                                beta_1=0.9, beta_2=0.999, epsilon=1e-07)
+    elif optimizer == 'ftrl':
+        optimizer = tf.keras.optimizers.Ftrl(learning_rate=learning_rate, 
+                                                learning_rate_power=-0.5, 
+                                                initial_accumulator_value=0.1, 
+                                                l1_regularization_strength=0.0, 
+                                                l2_regularization_strength=0.0, 
+                                                l2_shrinkage_regularization_strength=0.0)
+    else:
+        pass
+    model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics='accuracy')
+    print('[3/6] Model correctly loaded.')
 
-        # Define callbacks early stopping and model checkpoint
-        early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_lvl3_accuracy', patience=int(epoch/10), restore_best_weights=True)
-        model_checkpoint = tf.keras.callbacks.ModelCheckpoint(filepath=paths.train_path+'/model_checkpoint/'+'model_'+'checkpoint-epoch-{epoch:02d}', 
-                                                                save_freq='epoch',  # Fréquence de sauvegarde (à chaque époque)
-                                                                save_best_only=False,  # Sauvegarder uniquement le meilleur modèle
-                                                                save_weights_only=False)  # Sauvegarder le modèle complet (architecture + poids))
-        print('[4/6] Callbacks defined.')
+    # Define callbacks early stopping and model checkpoint
+    early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_lvl3_accuracy', patience=int(epoch/10), restore_best_weights=True)
+    model_checkpoint = tf.keras.callbacks.ModelCheckpoint(filepath=paths.train_path+'/model_checkpoint/'+'model_'+'checkpoint-epoch-{epoch:02d}', 
+                                                            save_freq='epoch',  # Fréquence de sauvegarde (à chaque époque)
+                                                            save_best_only=False,  # Sauvegarder uniquement le meilleur modèle
+                                                            save_weights_only=False)  # Sauvegarder le modèle complet (architecture + poids))
+    print('[4/6] Callbacks defined.')
 
-        # Train the model with callbacks
-        model.fit(Xtrain, 
-                  {'lvl1':Ytrain_cat[0],'lvl2':Ytrain_cat[1],'lvl3':Ytrain_cat[2]},
-                  epochs=epoch, 
-                  batch_size=batch_size, 
-                  validation_data=(Xval, Yval_cat),
-                  callbacks=[early_stopping, model_checkpoint],
-                  verbose=1)
-        print('[5/6] Model trained.')
+    # Train the model with callbacks
+    model.fit(Xtrain, 
+                {'lvl1':Ytrain_cat[0],'lvl2':Ytrain_cat[1],'lvl3':Ytrain_cat[2]},
+                epochs=epoch, 
+                batch_size=batch_size, 
+                validation_data=(Xval, Yval_cat),
+                callbacks=[early_stopping, model_checkpoint],
+                verbose=1)
+    print('[5/6] Model trained.')
 
-        # Save the best model
-        model.save(paths.train_path+"/best_model")
-        print('[6/6] Best model saved.')
+    # Save the best model
+    model.save(paths.train_path+"/best_model")
+    print('[6/6] Best model saved.')
 
-        # Test the model
-        loss, acc = model.evaluate(Xtest, Ytest_cat, verbose=1)
+    # Test the model
+    perfs = model.evaluate(Xtest, Ytest_cat, verbose=1)
+    print(perfs)
 
-        return jsonify({'message': 'Training completed successfully. Accuracy : '+str(acc)+' Loss : '+str(loss)+'.'})
-    except Exception as e:
-        return jsonify({'error': str(e)})
+    return jsonify({'message': 'Training completed successfully.'})
+
     
