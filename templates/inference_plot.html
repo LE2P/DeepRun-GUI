@@ -49,7 +49,6 @@
     <button id="btn-process_subfolder" class="fun-button">Inference Results</button>
     <p id="info_subfolder"></p>
     <br>
-    <br>
 
     <!-- Select original image -->
     <p class="title">2. Select original image</p>
@@ -64,8 +63,6 @@
     <!-- Button to display the image origin and coordonate system -->
     <button id="btn-process_image_tiff" class="fun-button">Image Metadata</button>
     <p id="image_metadata"></p>
-    <div id="plot-original"></div>
-    <br>
     <br>
 
     <!-- Select the format to save the inference results, tiff or png -->
@@ -76,7 +73,6 @@
         <input type="radio" id="png" name="format" value="png">
         <label for="png">PNG</label><br>
     </form>
-    <br>
     <br>
 
     <!-- Dynamic inputs for img_width, img_height, and pixelRes -->
@@ -134,14 +130,14 @@
                 success: function(response) {
                     // Update the info paragraph
                     var info = $('#info_subfolder');
-                    info.text('Nombre d\'éléments : ' + response.numItems);
+                    info.text('Number of numpy files : ' + response.numItems);
 
                     var sizeInMB = response.totalSize / (1024 * 1024);
                     if (sizeInMB >= 1024) {
                         var sizeInGB = sizeInMB / 1024;
-                        info.append('<br>Taille totale : ' + sizeInGB.toFixed(2) + ' Go');
+                        info.append('<br>Size : ' + sizeInGB.toFixed(2) + ' Go');
                     } else {
-                        info.append('<br>Taille totale : ' + sizeInMB.toFixed(2) + ' Mo');
+                        info.append('<br>Size : ' + sizeInMB.toFixed(2) + ' Mo');
                     }
                 },
                 error: function(error) {

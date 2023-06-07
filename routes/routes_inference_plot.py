@@ -31,8 +31,10 @@ def get_subfolder_info():
     total_size = 0
 
     for root, dirs, files in os.walk(folder_path):
-        num_items += len(dirs) + len(files)
-        total_size += sum(os.path.getsize(os.path.join(root, name)) for name in files)
+        for file in files:
+            if file.endswith('.npy'):
+                num_items += 1
+                total_size += os.path.getsize(os.path.join(root, file))
 
     response = {
         'numItems': num_items,
@@ -85,7 +87,7 @@ def save_image():
     if filename != subfolder:
         return jsonify({'message': 'The filename and subfolder must have the same src. Please check the name of the subfolder and the name of the file.'})
     else:
-        output_path = os.path.join(paths.inference_path+"output/", subfolder+'/')  # Update folder path
+        output_path = os.path.join(paths.inference_path+ 'output/'+ subfolder+'/')  # Update folder path
         raster_path = os.path.join(paths.inference_path, filename)  # Update image path
         # output_path = 'tmp/inference/output/ptile.tif/'; raster_path = 'tmp/inference/ptile.tif'
         print('Output path: ', output_path)
@@ -145,6 +147,7 @@ def save_image():
             dataset.SetProjection(sr)
             dataset.GetRasterBand(1).WriteArray(data_plot)
             dataset = None
+            saveFormat = '.tif'
 
         elif fileformat == 'png':
 
@@ -153,14 +156,26 @@ def save_image():
             labels, colors = cirad.get_color_legend()
             patches = [mpatches.Patch(color=colors[i], label=labels[i]) for i in range(len(labels))]
 
-            # Save png plot
-            plt.imshow(data_plot)
-            # add a custom legend
-            plt.legend(handles=patches, loc='upper right', bbox_to_anchor=(1.2, 1), ncol=1, fontsize='small')
-            plt.savefig(output_path+'inference_'+filename.split('.')[0]+".png")
+            # Generate a plot of the image (assuming grayscale image)
+            fig = Figure()
+            canvas = FigureCanvas(fig)
+            ax = fig.add_subplot(111)
+            ax.imshow(data_plot)
+            ax.legend(handles=patches, loc='upper right', bbox_to_anchor=(2, 1.75), ncol=1, fontsize='small')
+            ax.axis('off')
+
+            fig.subplots_adjust(right=0.5)
+
+            # Save the plot as an image file
+            img_path = output_path+'inference_'+filename.split('.')[0]+".png"
+            print(img_path)
+            canvas.print_figure(img_path, dpi=80)
+            saveFormat = '.png'
             
         # Return success message and imagePath
-        return jsonify({'message': 'Image saved successfully! Location of the assembled image: '+output_path+'inference_'+filename+".tif"})
+        return jsonify({'message': 'Image saved successfully! Location of the assembled image: '+
+                        output_path+'inference_'+
+                        filename.split('.')[0]+saveFormat})
 
 
 

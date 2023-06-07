@@ -256,7 +256,7 @@ Click on <b>Inference</b> section.
   * [ ] Chinese
   * [ ] Spanish
 
-See the [open issues](https://github.com/LE2P/DeepRun-GUI/issues)) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/LE2P/DeepRun-GUI/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

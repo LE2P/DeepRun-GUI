@@ -7,7 +7,7 @@ base_path =        'tmp/'
 # Main folders
 modeling_folder =  'modeling/'
 train_folder =     'train/'
-inference_folder = 'inference/output/'
+inference_folder = 'inference/'
 # Tools folders
 config_folder =    'config/'
 metadata_folder =  'metadata/'
@@ -38,6 +38,7 @@ class Paths:
         os.makedirs(self.train_path, exist_ok=True)
         os.makedirs(self.config_path, exist_ok=True)
         os.makedirs(self.inference_path, exist_ok=True)
+
 
         os.makedirs(self.metadata_path, exist_ok=True)
 
