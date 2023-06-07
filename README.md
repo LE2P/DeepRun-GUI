@@ -248,13 +248,15 @@ Click on <b>Inference</b> section.
 * [ ] Add others segmentation model
 * [ ] Add image bubbles tracking
 * [ ] Add Changelog
-* [ ] Add back to top links
-* [ ] Add Additional Templates w/ Examples
+* [ ] Add Additional Examples
+* [ ] Correction of search functionality 
 * [ ] Multi-language Support
+  * [ ] French
+  * [ ] Créole
   * [ ] Chinese
   * [ ] Spanish
 
-See the [open issues](https://github.com/christophe-lkc/Deep-API/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/LE2P/DeepRun-GUI/issues)) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

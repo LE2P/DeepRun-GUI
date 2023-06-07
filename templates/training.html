@@ -49,6 +49,7 @@
         <button id="check-model" class="fun-button">Model ?</button>
         <p id="result-text-model">Please check me</p>
     </div>
+    <br>
       
     <p class="title">2. Load data</p>
     <div>
@@ -63,8 +64,11 @@
     <!--
         <div id="plot-x"></div>
     -->
-    <img id="plot-x" alt="Sample" width="50" height="50">
-    
+    <br>
+    <img id="plot-x" alt="Sample" width="30" height="30">
+    <br>
+    <br>
+
     <div>
         <label for="input-file-y">Select input file Y:</label>
         <input type="file" id="input-file-y">
@@ -73,10 +77,15 @@
         <div id="progress-bar-y"></div>
         <div id="time-remaining-y"></div><div id="progress-label-y">0%</div>
     </div>
+    <br>
     <!-- Plot a sample of the data TODO 404 Error -->
     <div id="plot-y"></div>
-
     <br>
+    <button id="replot-button" class="fun-button">Replot</button>
+    <br>
+    <br>
+    <br>
+
     <p class="title">3. Define some parameters</p>
     <div>
         <label for="optimizer">Optimizer:</label>
@@ -143,7 +152,7 @@
                 url: '/check-model',
                 type: 'GET',
                 success: function(response) {
-                    $('#result-text-model').text(response.message);
+                    $('#result-text-model').text(response.message).addClass('blue-text');
                 },
                 error: function() {
                     $('#result-text-model').text('Error the model is missing!').addClass('red-text');
@@ -232,12 +241,40 @@
                 success: function(response) {
                     // Display success message
                     $('#message_y').text(response.message);
-                    var labelY = $('<p>').text('Label: ' + response.label);
-                    $('#plot-y').append(labelY);
+                    var labelY = $('<p>').text('Label (lvl1 > lvl2 > lvl3): ' + response.label.join(', '));
+                    $('#plot-y').append(labelY).addClass('blue-text');
                 },
                 error: function(error) {
                     // Display error message
                     $('#message_y').text('Error while uploading the Y file!').addClass('red-text');
+                }
+            });
+        });
+
+        // Listen to replot button
+        $('#replot-button').click(function() {
+            // Appel de la route Flask pour recharger les datasets et récupérer le nouveau label
+            $.ajax({
+                url: '/replot',
+                type: 'GET',
+                success: function(response) {
+                    // Generate a random parameter to prevent browser caching
+                    var randomParam = Math.random().toString(36).substring(7);
+                    var imageUrl = 'static/img/sample_plot-x.png?' + randomParam;
+
+                    // Affichage du nouveau graphique "plot-x"
+                    // Display the plot of the image
+                    var image = $('<img>').attr('src', imageUrl);
+                    $('#plot-x').html(image);
+
+                    // Affichage du nouveau label dans le "plot-y"
+                    var labelY = $('<p>').text('Label (lvl1 > lvl2 > lvl3): ' + response.label.join(', '));
+                    $('#plot-y').empty().append(labelY).addClass('blue-text');
+
+                },
+                error: function(error) {
+                    // Affichage d'un message d'erreur en cas d'échec de la requête
+                    console.error('Error:', error);
                 }
             });
         });

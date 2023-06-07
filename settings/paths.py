@@ -7,7 +7,7 @@ base_path =        'tmp/'
 # Main folders
 modeling_folder =  'modeling/'
 train_folder =     'train/'
-inference_folder = 'inference/'
+inference_folder = 'inference/output/'
 # Tools folders
 config_folder =    'config/'
 metadata_folder =  'metadata/'

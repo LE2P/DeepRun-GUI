@@ -13,7 +13,7 @@ from tools.cirad_legend import CiradLegend
 @app.route('/get_subfolders')
 def get_subfolders():
     # Give the path of the folder containing the subfolders
-    folder_path = paths.inference_path+"/output/"
+    folder_path = paths.inference_path+"output/"
 
     # Get the list of all files and directories
     subfolders = [name for name in os.listdir(folder_path) if os.path.isdir(os.path.join(folder_path, name))]
@@ -23,7 +23,7 @@ def get_subfolders():
 @app.route('/get_subfolder_info', methods=['POST'])
 def get_subfolder_info():
     folder = request.form['folder']
-    folder_path = os.path.join(paths.inference_path+"/output/", folder)  # Update folder path
+    folder_path = os.path.join(paths.inference_path+"output/", folder)  # Update folder path
 
     num_items = 0
     total_size = 0
@@ -78,7 +78,9 @@ def save_image():
     print('Pixel resolution: ', pixelRes)
 
     # Check if filename and subfolder have the same name, if not probably the src will be wrong, so stop the process
-    if filename.split('.')[0] != subfolder:
+    print(filename)
+    print(subfolder)
+    if filename != subfolder:
         return jsonify({'message': 'The filename and subfolder must have the same src. Please check the name of the subfolder and the name of the file.'})
     else:
         output_path = os.path.join(paths.inference_path+"output/", subfolder+'/')  # Update folder path
@@ -136,7 +138,7 @@ def save_image():
 
             #Write output
             driver = gdal.GetDriverByName('Gtiff')
-            dataset = driver.Create(output_path+'inference_'+filename+".tiff", ncols, nrows, 1, gdal.GDT_Byte)
+            dataset = driver.Create(output_path+'inference_'+filename.split('.')[0]+".tiff", ncols, nrows, 1, gdal.GDT_Byte)
             dataset.SetGeoTransform(geotransform)
             dataset.SetProjection(sr)
             dataset.GetRasterBand(1).WriteArray(data_plot)
@@ -153,7 +155,7 @@ def save_image():
             plt.imshow(data_plot)
             # add a custom legend
             plt.legend(handles=patches, loc='upper right', bbox_to_anchor=(1.2, 1), ncol=1, fontsize='small')
-            plt.savefig(output_path+'inference_'+filename+".png")
+            plt.savefig(output_path+'inference_'+filename.split('.')[0]+".png")
             
         # Return success message and imagePath
         return jsonify({'message': 'Image saved successfully! Location of the assembled image: '+output_path+'inference_'+filename+".tiff"})

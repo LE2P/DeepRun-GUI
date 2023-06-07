@@ -8,6 +8,11 @@ from settings.paths import paths
 from tools.model_tf import ModelLoader
 from tools.cirad_legend import CiradLegend
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
+import random
+
+randomID = None
 
 @app.route('/check-model')
 def check_model():
@@ -24,17 +29,27 @@ def check_model():
 
 @app.route('/upload_x', methods=['POST'])
 def upload_x():
+    global randomID
     file = request.files['x_file']
     file.save(paths.train_path+'X.npy')  # Save the file to the path
 
     # Load the data from the NPY file
     data = np.load(paths.train_path+'X.npy')
-    
+
+    # Get a global random value
+    array_size = data.shape[0]
+    randomID = random.randint(0, array_size - 1)
+
     # Generate a plot of the image (assuming grayscale image)
-    plt.imshow(data[0])
-    plt.axis('off')
-    plt.savefig(paths.routes_path+'sample_plot-x.png')  # Save the plot as an image file
-    plt.close()  # Close the plot
+    fig = Figure()
+    canvas = FigureCanvas(fig)
+    ax = fig.add_subplot(111)
+    ax.imshow(data[randomID])
+    ax.axis('off')
+
+    # Save the plot as an image file
+    img_path = paths.routes_path + 'sample_plot-x.png'
+    canvas.print_figure(img_path, dpi=80)
 
     return jsonify({'message': 'X uploaded successfully.'})
 
@@ -50,12 +65,56 @@ def upload_y():
         data = data[:,-3:]
     # Get labels from CIRAD legend
     cirad = CiradLegend()
-    classes = data[0]
+    classes = data[randomID]
     print(classes)
     legend = cirad.get_legend(classes)
     print(legend)
 
     return jsonify({'message': 'Y uploaded successfully.', 'label': legend})
+
+@app.route('/replot', methods=['GET'])
+def replot():
+    # Reload dataset
+    data_x = np.load(paths.train_path+'X.npy')
+    data_y = np.load(paths.train_path+'Y.npy')
+    if data_y.shape[1] > 3:
+        #keep last 3 columns
+        data_y = data_y[:,-3:]
+    print(data_x.shape)
+    print(data_y.shape)
+
+    # Get a global random value
+    array_size = data_x.shape[0]
+    randomID = random.randint(0, array_size - 1)
+    print(randomID)
+
+    # Get labels from CIRAD legend
+    cirad = CiradLegend()
+    classes = data_y[randomID]
+    print(classes)
+    legend = cirad.get_legend(classes)
+    print(legend)
+
+    # Generate a plot of the image (assuming grayscale image)
+    fig = Figure()
+    canvas = FigureCanvas(fig)
+    ax = fig.add_subplot(111)
+    ax.imshow(data_x[randomID])
+    ax.axis('off')
+
+    # Save the plot as an image file
+    img_path = paths.routes_path + 'sample_plot-x.png'
+    print(img_path)
+    canvas.print_figure(img_path, dpi=80)
+
+    response = {
+        'label': legend,  # Mettez à jour avec le nouveau label
+        'image_url': paths.routes_path+'sample_plot-x.png'  # Mettez à jour avec le nouvel emplacement de l'imagette
+    }
+    
+    print(response)
+
+    return jsonify(response)
 
 @app.route('/train', methods=['POST'])
 def train_model():
