@@ -1,7 +1,7 @@
 import os
 
 # Routes
-routes_path =     'routes/img/'
+routes_path =     'static/img/'
 # Base path
 base_path =        'tmp/'
 # Main folders

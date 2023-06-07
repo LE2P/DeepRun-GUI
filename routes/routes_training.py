@@ -81,7 +81,7 @@ def train_model():
         # Charger les fichiers d'entrée X et Y
         X = np.load(paths.train_path + 'X.npy')
         Y = np.load(paths.train_path + 'Y.npy')
-        print('[1/5] Data correctly loaded.')
+        print('[1/6] Data correctly loaded.')
 
         # Check if y is superior to 3 columns
         if Y.shape[1] > 3:
@@ -114,7 +114,7 @@ def train_model():
         model_path = paths.modeling_path + 'model/'
         model = tf.keras.models.load_model(model_path)
         print(model)
-        print('[2/5] Model correctly loaded.')
+        print('[2/6] Model correctly loaded.')
 
         # Change optimizer adam, sgd, rmsprop, adagrad, adadelta, adamax, nadam, ftrl
         if optimizer == 'adam':
@@ -147,7 +147,7 @@ def train_model():
         else:
             pass
         model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics='accuracy')
-        print('[2/5] Model correctly loaded.')
+        print('[3/6] Model correctly loaded.')
 
         # Define callbacks early stopping and model checkpoint
         early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_lvl3_accuracy', patience=int(epoch/10), restore_best_weights=True)
@@ -155,7 +155,7 @@ def train_model():
                                                                 save_freq='epoch',  # Fréquence de sauvegarde (à chaque époque)
                                                                 save_best_only=False,  # Sauvegarder uniquement le meilleur modèle
                                                                 save_weights_only=False)  # Sauvegarder le modèle complet (architecture + poids))
-        print('[3/5] Callbacks defined.')
+        print('[4/6] Callbacks defined.')
 
         # Train the model with callbacks
         model.fit(Xtrain, 
@@ -165,11 +165,11 @@ def train_model():
                   validation_data=(Xval, Yval_cat),
                   callbacks=[early_stopping, model_checkpoint],
                   verbose=1)
-        print('[4/5] Model trained.')
+        print('[5/6] Model trained.')
 
         # Save the best model
         model.save(paths.train_path+"/best_model")
-        print('[5/5] Best model saved.')
+        print('[6/6] Best model saved.')
 
         # Test the model
         loss, acc = model.evaluate(Xtest, Ytest_cat, verbose=1)

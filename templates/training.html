@@ -63,7 +63,7 @@
     <!--
         <div id="plot-x"></div>
     -->
-    <img id="plot-x" src="" alt="Logo" width="50" height="50">
+    <img id="plot-x" alt="Sample" width="50" height="50">
     
     <div>
         <label for="input-file-y">Select input file Y:</label>
@@ -98,7 +98,7 @@
     </div>
     <div>
         <label for="data_use">Data use percent:</label>
-        <input type="text" id="data_use" name="data_use" value="0.01" size="5">
+        <input type="text" id="data_use" name="data_use" value="0.2" size="5">
     </div>
     <br>
     <div>
@@ -187,7 +187,7 @@
                     // Display success message
                     $('#message_x').text(response.message);
                     // Display the plot of the image
-                    var image = $('<img>').attr('src', 'routes/img/sample_plot-x.png');
+                    var image = $('<img>').attr('src', 'static/img/sample_plot-x.png');
                     $('#plot-x').html(image);
                 },
                 error: function(error) {
