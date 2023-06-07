@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 import random
+import math
 
 randomID = None
 
@@ -231,7 +232,18 @@ def train_model():
     # Test the model
     perfs = model.evaluate(Xtest, Ytest_cat, verbose=1)
     print(perfs)
+    loss1 = perfs[1]
+    loss2 = perfs[2]
+    loss3 = perfs[3]
+    acc1 = perfs[4]
+    acc2 = perfs[5]
+    acc3 = perfs[6]
 
-    return jsonify({'message': 'Training completed successfully.'})
+    round_acc3 = round(acc3, 2)
+
+    return jsonify({'message': 'Training completed successfully.'+ 
+                    ' Accuracy of the last level: '+str(round_acc3)+', with '+
+                    str(epoch)+' epochs and '+
+                    str(data_used*100)+'% of data'})
 
     

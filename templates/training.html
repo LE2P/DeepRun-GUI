@@ -303,7 +303,7 @@
             contentType: 'application/json',
             success: function(response) {
                 // Display success message
-                $('#training-result').text(response.message);
+                $('#training-result').text(response.message).addClass('blue-text');
             },
             error: function(error) {
                 // Display error message
