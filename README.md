@@ -120,21 +120,33 @@ Here is an example of instructions for setting up your project locally. To get a
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* GDAL
+This is an example of how to list things you need to use the software and how to install the required packages into a virtual environment.
+
+* Install GPU drivers, CUDA and CUDNN for accelerated computations
+
+* Create and load a virtual environment
   ```sh
-  sudo apt-get install pythonx.x-dev
+  virtualenv --python python3.10 venv
+  source venv/bin/activate
+  ...
+  #'deactivate' to close the virtual environment
+  ```
+
+* Install GDAL and Python bindings
+  ```sh
+  sudo apt-get install python<PYTHON VERSION>-dev
   sudo add-apt-repository ppa:ubuntugis/ppa && sudo apt-get update
   sudo apt-get update
   sudo apt-get install gdal-bin
   sudo apt-get install libgdal-dev
+  #Include these export into .bashrc
   export CPLUS_INCLUDE_PATH=/usr/include/gdal
   export C_INCLUDE_PATH=/usr/include/gdal
   ogrinfo --version
   pip install GDAL==<GDAL VERSION FROM OGRINFO>
   ```
 
-* Miscellaneous
+* Install miscellaneous packages
     ```sh
   pip install flask
   pip install tensorflow
@@ -142,9 +154,25 @@ This is an example of how to list things you need to use the software and how to
   pip install matplotlib
   ```
 
+### Alternative prerequisites
+
+Setting up an environment does not ensure reproducibility of results, as this will depend on hardware, compilers and operating software. One solution is to deploy containers. In particular here, using Apptainer software (previously known as Singularity), which enables application-level virtualization without the need of administrator rights.
+
+* Assuming apptainer is installed (please contact the administrator), build the container
+  ```sh
+  apptainer build container/le2p.sif container/le2p.def
+  ```
+
+* Running as a shell without administrator rights
+  ```sh
+  # --nv flag for GPU access | --bind flag if working space is outside of home directory
+  apptainer shell --nv --bind /<Origin directory>/:/<Destination directory>/ container/le2p.sif
+  ...
+  ```
+
 ### Installation
 
-Here is an example of how install and set up the application.
+Here is an example of how install and set up the DeepRun application.
 
 1. Clone the repo
    ```sh

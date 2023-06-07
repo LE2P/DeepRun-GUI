@@ -1,0 +1,49 @@
+BootStrap: docker
+From: tensorflow/tensorflow:2.11.0-gpu-jupyter
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+    pip list
+    apt-get update
+    apt-get -qq  install -y wget
+    apt-get -qq  install -y ipython3
+    apt-get -qq  install -y python3-gdal
+    apt-get -qq  install -y python3-tk
+    apt-get -qq  install -y graphviz
+    apt-get -qq  install -y redis-server
+    apt-get -qq  install -y build-essential cmake git pkg-config libjpeg8-dev libtiff5-dev  libavcodec-dev libavformat-dev libswscale-dev libv4l-dev  libgtk2.0-dev libatlas-base-dev gfortran
+    apt-get -qq  install -y nvidia-modprobe libcupti-dev
+    apt-get -qq  install -y python3-pip
+    apt-get -qq  install -y gstreamer1.0-opencv libopencv-contrib-dev python3-opencv
+    python3 -m pip install openpyxl
+    python3 -m pip install aequitas
+    python3 -m pip install flask==2.3.2
+    python3 -m pip install Werkzeug==2.3.4
+    python3 -m pip install tensorrt==8.6.1
+    python3 -m pip install tqdm
+    python3 -m pip install scikit-learn
+    python3 -m pip install rasterio
+    python3 -m pip install geopandas
+    python3 -m pip install shapely
+    python3 -m pip install plotly
+    python3 -m pip install matplotlib
+    python3 -m pip install Pillow
+    python3 -m pip install POT
+    python3 -m pip install cdlib
+    
+    python3 -m pip list
+
+%runscript
+    exec /usr/bin/python3 "$@"
+
+%help
+    A singularity container ready to run Tensorflow with NVIDIA GPUs
+
+    * build the container: apptainer build container/le2p.sif container/le2p.def
+
+    * running as a shell: apptainer shell --nv --bind /<Origin directory>/:/<Destination directory>/ container/le2p.sif
+
+    * running flask application: cd <Working directory> && apptainer shell container/le2p.sif && flask run
+
+%labels
+    Author ENERGY-lab, 2023
