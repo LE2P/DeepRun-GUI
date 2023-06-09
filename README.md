@@ -40,9 +40,8 @@
 ## About The Project
 
 <div align="center">
-  <img src="static/screenshot/screenshot_index.png" alt="Logo" width="800" height="500">
+  <img src="static/screenshot/screenshot_index.png" alt="Logo" width="800" height="500" style="border: 1px solid black;">
 </div>
-<br />
   
 The main objective of the DeepRun postdoctoral project is to develop multi-scale image recognition tools, using Deep Learning algorithms, applied to the estimation of biomass resources for bioenergy production, and to the reliability of hydrogen converters for energy storage optimization.
 
@@ -150,16 +149,17 @@ apptainer shell --nv --bind /<Origin directory>/:/<Destination directory>/ conta
 
 Here is an example of how install and set up the DeepRun application.
 
-1. Clone the repo
+1. Complete the prerequisites installation
 
 ```sh
-   git clone https://github.com/christophe-lkc/Deep-API.git
+  # GPU driver/cuda/cudnn installation and set up the development environment
+  # or run on container
 ```
 
-2. Install required packages
+2. Clone the repo
 
 ```sh
-   pip install -r settings/requirements.txt
+   git clone https://github.com/LE2P/DeepRun-GUI.git
 ```
 
 3. Navigate to the project directory and start the application
@@ -176,8 +176,8 @@ Here is an example of how install and set up the DeepRun application.
 
 <br>
 Click on <b>Model</b> section.
-<div class="image-container">
-  <img src="static/screenshot/screenshot_modeling.png" alt="Logo" width="800" height="500">
+<div align="center">
+  <img src="static/screenshot/screenshot_modeling.png" alt="Logo" width="800" height="500" style="border: 1px solid black;">
 </div>
 Two options are available, generation of a deep model from source file or a set of parameters.
 <ul>
@@ -194,8 +194,8 @@ Two options are available, generation of a deep model from source file or a set 
 <br>
 
 Click on <b>Train</b> section.
-<div class="image-container">
-  <img src="static/screenshot/screenshot_training.png" alt="Logo" width="800" height="500">
+<div align="center">
+  <img src="static/screenshot/screenshot_training.png" alt="Logo" width="800" height="500" style="border: 1px solid black;">
 </div>
 <ul>
   <li>Click on 'MODEL ?' button.
@@ -219,8 +219,8 @@ Click on <b>Train</b> section.
 <br>
 
 Click on <b>Inference</b> section.
-<div class="image-container">
-  <img src="static/screenshot/screenshot_inference.png" alt="Logo" width="800" height="500">
+<div align="center">
+  <img src="static/screenshot/screenshot_inference.png" alt="Logo" width="800" height="500" style="border: 1px solid black;">
 </div>
 <ul>
   <li>Click on prefered model selection.
