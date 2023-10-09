@@ -46,5 +46,9 @@ def inference_plot():
 # Import routes for inference phase
 from routes.routes_inference_plot import *
 
+@app.route('/visu')
+def visu():
+    return render_template("visu.html")
+
 if __name__ == '__main__':
     app.run(debug=True)
